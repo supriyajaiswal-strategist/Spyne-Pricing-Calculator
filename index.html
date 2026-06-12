@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>VINI Pricing Calculator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --font-sans: "Inter Tight", system-ui, -apple-system, sans-serif;
+    --font-mono: "JetBrains Mono", ui-monospace, monospace;
+
+    --bg: #f8fafc;
+    --surface: #ffffff;
+    --ink: #0f172a;
+    --ink-2: #334155;
+    --muted: #94a3b8;
+    --line: #e2e8f0;
+    --line-2: #f1f5f9;
+
+    --success: #16a34a;
+    --warn: #d97706;
+    --bad: #dc2626;
+    --link: #2563eb;
+    --brand: #4600f2;
+    --brand-soft: #f1ecff;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { margin: 0; padding: 0; }
+  body {
+    font-family: var(--font-sans);
+    background: var(--bg);
+    color: var(--ink);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.45;
+  }
+
+  .num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 40px 28px 80px; }
+
+  /* Header */
+  header.page { margin-bottom: 32px; }
+  .eyebrow {
+    font-size: 12px; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--brand);
+    display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
+  }
+  .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--brand); }
+  h1.title { font-size: 30px; font-weight: 700; letter-spacing: -0.02em; margin: 0 0 8px; }
+  .subtitle { font-size: 15px; color: var(--ink-2); max-width: 620px; margin: 0; }
+
+  /* Layout */
+  .grid { display: grid; grid-template-columns: 1fr 380px; gap: 24px; align-items: start; }
+  @media (max-width: 940px) { .grid { grid-template-columns: 1fr; } }
+
+  /* Card */
+  .card {
+    background: var(--surface); border: 1px solid var(--line);
+    border-radius: 14px; padding: 22px 24px; margin-bottom: 20px;
+  }
+  .step-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 4px; }
+  .step-tag {
+    font-family: var(--font-mono); font-size: 11px; font-weight: 600;
+    color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase;
+  }
+  .step-title { font-size: 17px; font-weight: 700; margin: 0; letter-spacing: -0.01em; }
+  .step-sub { font-size: 13px; color: var(--muted); margin: 2px 0 18px; }
+
+  /* Tier table */
+  table.tier { width: 100%; border-collapse: collapse; }
+  table.tier thead th {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase;
+    color: var(--muted); text-align: right; padding: 8px 10px; border-bottom: 1px solid var(--line);
+  }
+  table.tier thead th.lead { text-align: left; }
+  .grouphdr th {
+    font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
+    color: var(--ink-2); padding: 10px 10px 4px; text-align: center; border: none;
+  }
+  table.tier tbody td {
+    padding: 11px 10px; border-bottom: 1px solid var(--line-2);
+    text-align: right; font-size: 14px;
+  }
+  table.tier tbody td.lead { text-align: left; }
+  table.tier tbody tr { cursor: pointer; transition: background 0.12s; }
+  table.tier tbody tr:hover { background: var(--line-2); }
+  table.tier tbody tr.active { background: var(--brand-soft); }
+  table.tier tbody tr.active td { color: var(--ink); }
+  .radio-cell { display: flex; align-items: center; gap: 10px; }
+  .radio {
+    width: 16px; height: 16px; border-radius: 50%; border: 1.5px solid var(--muted);
+    flex: 0 0 auto; position: relative; transition: border-color 0.12s;
+  }
+  tr.active .radio { border-color: var(--brand); }
+  tr.active .radio::after {
+    content: ""; position: absolute; inset: 3px; border-radius: 50%; background: var(--brand);
+  }
+  .vinlabel { font-weight: 600; font-family: var(--font-mono); }
+  .vinlabel small { font-family: var(--font-sans); color: var(--muted); font-weight: 500; font-size: 11px; display: block; }
+  .colsplit { border-left: 1px solid var(--line); }
+
+  /* Agents */
+  .agent-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  @media (max-width: 560px) { .agent-grid { grid-template-columns: 1fr; } }
+  .product-block { border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
+  .product-name { font-size: 13px; font-weight: 700; margin: 0 0 2px; }
+  .product-desc { font-size: 11.5px; color: var(--muted); margin: 0 0 12px; }
+  .agent-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 9px 0; border-top: 1px solid var(--line-2);
+  }
+  .agent-row:first-of-type { border-top: none; }
+  .agent-left { display: flex; align-items: center; gap: 10px; }
+  .agent-name { font-size: 13.5px; font-weight: 500; }
+  .agent-price { font-size: 13px; color: var(--ink-2); }
+  .agent-price.off { color: var(--muted); }
+
+  /* Toggle */
+  .toggle { position: relative; width: 36px; height: 20px; flex: 0 0 auto; cursor: pointer; }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .slider {
+    position: absolute; inset: 0; background: #cbd5e1; border-radius: 999px; transition: 0.16s;
+  }
+  .slider::before {
+    content: ""; position: absolute; height: 16px; width: 16px; left: 2px; top: 2px;
+    background: #fff; border-radius: 50%; transition: 0.16s; box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+  }
+  .toggle input:checked + .slider { background: var(--brand); }
+  .toggle input:checked + .slider::before { transform: translateX(16px); }
+
+  /* Groups stepper */
+  .groups-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  .stepper { display: flex; align-items: center; gap: 0; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+  .stepper button {
+    width: 38px; height: 40px; border: none; background: var(--surface); cursor: pointer;
+    font-size: 18px; color: var(--ink-2); font-family: var(--font-sans);
+  }
+  .stepper button:hover { background: var(--line-2); }
+  .stepper input {
+    width: 56px; height: 40px; border: none; border-left: 1px solid var(--line); border-right: 1px solid var(--line);
+    text-align: center; font-family: var(--font-mono); font-size: 15px; font-weight: 600; color: var(--ink);
+  }
+  .stepper input:focus { outline: none; }
+  .tier-pill {
+    font-family: var(--font-mono); font-size: 11px; font-weight: 600; padding: 4px 9px;
+    border-radius: 999px; background: var(--line-2); color: var(--ink-2);
+  }
+  .tier-pill.on { background: var(--brand-soft); color: var(--brand); }
+
+  /* Summary (right) */
+  .summary { position: sticky; top: 24px; }
+  .summary .card { padding: 0; overflow: hidden; }
+  .sum-head { padding: 18px 22px 14px; border-bottom: 1px solid var(--line); }
+  .sum-head .lbl { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+  .sum-body { padding: 16px 22px; }
+  .line { display: flex; justify-content: space-between; align-items: baseline; padding: 7px 0; font-size: 13.5px; }
+  .line .l { color: var(--ink-2); }
+  .line .v { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 500; }
+  .line.discount .v { color: var(--success); }
+  .line.muted .l, .line.muted .v { color: var(--muted); }
+  .divider { height: 1px; background: var(--line); margin: 10px 0; }
+  .total-line { display: flex; justify-content: space-between; align-items: baseline; padding: 8px 0 0; }
+  .total-line .l { font-size: 14px; font-weight: 700; }
+  .total-line .v { font-family: var(--font-mono); font-size: 26px; font-weight: 700; letter-spacing: -0.01em; }
+  .total-line .per { font-size: 11px; color: var(--muted); font-weight: 500; }
+  .blended { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-top: 6px; }
+  .blended .num { color: var(--ink-2); }
+
+  .sum-foot { padding: 14px 22px 18px; background: var(--bg); border-top: 1px solid var(--line); }
+  .annual-row { display: flex; justify-content: space-between; align-items: baseline; }
+  .annual-row .l { font-size: 12px; color: var(--ink-2); font-weight: 600; }
+  .annual-row .v { font-family: var(--font-mono); font-size: 16px; font-weight: 700; }
+
+  .cta {
+    display: block; width: 100%; margin-top: 14px; padding: 12px; border: none; border-radius: 10px;
+    background: var(--brand); color: #fff; font-family: var(--font-sans); font-size: 14px; font-weight: 600;
+    cursor: pointer; transition: opacity 0.12s;
+  }
+  .cta:hover { opacity: 0.92; }
+
+  /* Insights */
+  .insights .card { padding: 18px 22px; }
+  .ins-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+  .ins-head svg { width: 15px; height: 15px; stroke: var(--brand); }
+  .ins-head .t { font-size: 13px; font-weight: 700; }
+  .ins-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 11px; }
+  .ins-item { display: flex; gap: 9px; font-size: 12.5px; color: var(--ink-2); line-height: 1.5; }
+  .ins-item .ico { flex: 0 0 auto; margin-top: 1px; }
+  .ins-item .ico svg { width: 14px; height: 14px; }
+  .ico-up svg { stroke: var(--success); }
+  .ico-info svg { stroke: var(--link); }
+  .ico-warn svg { stroke: var(--warn); }
+  .ins-item b { font-weight: 600; color: var(--ink); }
+  .ins-item .cta-inline { color: var(--link); text-decoration: underline dotted; cursor: pointer; }
+
+  .note { font-size: 11.5px; color: var(--muted); margin-top: 14px; line-height: 1.5; }
+  .note b { color: var(--ink-2); font-weight: 600; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="page">
+    <div class="eyebrow"><span class="dot"></span> VINI · Voice AI Agents</div>
+    <h1 class="title">Pricing Calculator</h1>
+    <p class="subtitle">Configure your VINI deployment and see a real-time cost breakdown with usage-based insights. Pricing is per rooftop, per month.</p>
+  </header>
+
+  <div class="grid">
+    <!-- LEFT: configuration -->
+    <div class="config">
+      <!-- Step 1 -->
+      <section class="card">
+        <div class="step-head">
+          <span class="step-tag">Step 1</span>
+          <h2 class="step-title">Select Max VINs &amp; plan</h2>
+        </div>
+        <p class="step-sub">Pick the monthly VIN tier for each rooftop. Prices shown are per agent, per rooftop.</p>
+        <table class="tier">
+          <thead>
+            <tr class="grouphdr">
+              <th class="lead"></th>
+              <th colspan="2">VINI Sales</th>
+              <th colspan="2" class="colsplit">VINI Service</th>
+            </tr>
+            <tr>
+              <th class="lead">Max VINs</th>
+              <th>Inbound</th>
+              <th>Outbound</th>
+              <th class="colsplit">Inbound</th>
+              <th>Outbound</th>
+            </tr>
+          </thead>
+          <tbody id="tierBody"></tbody>
+        </table>
+      </section>
+
+      <!-- Step 2 -->
+      <section class="card">
+        <div class="step-head">
+          <span class="step-tag">Step 2</span>
+          <h2 class="step-title">Choose your agents</h2>
+        </div>
+        <p class="step-sub">Activate the VINI agents you want to deploy. Run all four to unlock the bundle discount.</p>
+        <div class="agent-grid">
+          <div class="product-block">
+            <p class="product-name">VINI Sales</p>
+            <p class="product-desc">Lead qualification &amp; outreach</p>
+            <div class="agent-row">
+              <div class="agent-left">
+                <label class="toggle"><input type="checkbox" data-agent="salesIn" checked><span class="slider"></span></label>
+                <span class="agent-name">Inbound</span>
+              </div>
+              <span class="agent-price num" data-price="salesIn"></span>
+            </div>
+            <div class="agent-row">
+              <div class="agent-left">
+                <label class="toggle"><input type="checkbox" data-agent="salesOut" checked><span class="slider"></span></label>
+                <span class="agent-name">Outbound</span>
+              </div>
+              <span class="agent-price num" data-price="salesOut"></span>
+            </div>
+          </div>
+
+          <div class="product-block">
+            <p class="product-name">VINI Service</p>
+            <p class="product-desc">Support &amp; retention calls</p>
+            <div class="agent-row">
+              <div class="agent-left">
+                <label class="toggle"><input type="checkbox" data-agent="servIn" checked><span class="slider"></span></label>
+                <span class="agent-name">Inbound</span>
+              </div>
+              <span class="agent-price num" data-price="servIn"></span>
+            </div>
+            <div class="agent-row">
+              <div class="agent-left">
+                <label class="toggle"><input type="checkbox" data-agent="servOut" checked><span class="slider"></span></label>
+                <span class="agent-name">Outbound</span>
+              </div>
+              <span class="agent-price num" data-price="servOut"></span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Step 3 -->
+      <section class="card">
+        <div class="step-head">
+          <span class="step-tag">Step 3</span>
+          <h2 class="step-title">Group size</h2>
+        </div>
+        <p class="step-sub">How many rooftops in the group? Larger groups unlock volume discounts.</p>
+        <div class="groups-row">
+          <div class="stepper">
+            <button id="grpMinus" aria-label="Decrease">&minus;</button>
+            <input id="grpInput" class="num" type="text" value="1" inputmode="numeric" />
+            <button id="grpPlus" aria-label="Increase">+</button>
+          </div>
+          <div id="grpTier" class="tier-pill">No volume discount</div>
+        </div>
+        <p class="note">
+          <b>Volume tiers:</b> under 3 rooftops 0% &nbsp;·&nbsp; 3 to 6 rooftops 10% &nbsp;·&nbsp; 7 or more rooftops 20%.
+        </p>
+      </section>
+    </div>
+
+    <!-- RIGHT: summary + insights -->
+    <div class="summary">
+      <section class="card">
+        <div class="sum-head">
+          <span class="lbl">Cost breakdown</span>
+        </div>
+        <div class="sum-body">
+          <div id="lineItems"></div>
+          <div class="divider"></div>
+          <div class="line discount" id="bundleLine" style="display:none">
+            <span class="l">All-4-agents bundle (10%)</span>
+            <span class="v" id="bundleVal"></span>
+          </div>
+          <div class="line discount" id="groupLine" style="display:none">
+            <span class="l" id="groupLbl">Group volume discount</span>
+            <span class="v" id="groupVal"></span>
+          </div>
+          <div class="divider"></div>
+          <div class="total-line">
+            <div>
+              <div class="l">Per rooftop / mo</div>
+              <div class="per">after all discounts</div>
+            </div>
+            <span class="v num" id="perRooftop">$0</span>
+          </div>
+          <div class="blended">
+            <span>Blended per VIN</span>
+            <span class="num" id="blended">$0.00</span>
+          </div>
+        </div>
+        <div class="sum-foot">
+          <div class="annual-row">
+            <span class="l">Total monthly · <span id="grpCountFoot" class="num">1</span> rooftop(s)</span>
+            <span class="v num" id="monthlyTotal">$0</span>
+          </div>
+          <div class="annual-row" style="margin-top:8px">
+            <span class="l">Annual contract value</span>
+            <span class="v num" id="annualTotal" style="color:var(--brand)">$0</span>
+          </div>
+          <button class="cta">Request a formal quote</button>
+          <p class="note" style="margin-top:12px">
+            <b>Integrations</b> (DMS / CRM connectors) are billed as a pass-through cost and are not included above. Details shared during scoping.
+          </p>
+        </div>
+      </section>
+
+      <section class="insights">
+        <div class="card">
+          <div class="ins-head">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a7 7 0 0 0-4 12.7V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.3A7 7 0 0 0 12 2Z"/><path d="M9 21h6"/></svg>
+            <span class="t">Insights</span>
+          </div>
+          <ul class="ins-list" id="insights"></ul>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
+
+<script>
+  // ---- Pricing model (from Vini Price.xlsx) ----
+  // Per agent, per rooftop, per month.
+  const TIERS = [
+    { vins: 50,  salesIn: 900,  salesOut: 1150, servIn: 1100, servOut: 1399 },
+    { vins: 100, salesIn: 1500, salesOut: 2250, servIn: 1800, servOut: 2700 },
+    { vins: 200, salesIn: 2000, salesOut: 3000, servIn: 2400, servOut: 3600 },
+    { vins: 300, salesIn: 3000, salesOut: 4500, servIn: 3600, servOut: 5400 },
+  ];
+  const AGENTS = [
+    { key: "salesIn",  label: "VINI Sales · Inbound" },
+    { key: "salesOut", label: "VINI Sales · Outbound" },
+    { key: "servIn",   label: "VINI Service · Inbound" },
+    { key: "servOut",  label: "VINI Service · Outbound" },
+  ];
+  const BUNDLE_DISCOUNT = 0.10; // all 4 agents
+
+  const state = {
+    tierIndex: 1,                       // default 100 VINs
+    agents: { salesIn:true, salesOut:true, servIn:true, servOut:true },
+    groups: 1,
+  };
+
+  const fmt   = n => "$" + Math.round(n).toLocaleString("en-US");
+  const fmt2  = n => "$" + n.toLocaleString("en-US", {minimumFractionDigits:2, maximumFractionDigits:2});
+
+  function groupDiscount(g) {
+    if (g >= 7) return 0.20;
+    if (g >= 3) return 0.10;
+    return 0;
+  }
+
+  // ---- Render tier table ----
+  function renderTiers() {
+    const tb = document.getElementById("tierBody");
+    tb.innerHTML = "";
+    TIERS.forEach((t, i) => {
+      const tr = document.createElement("tr");
+      tr.className = i === state.tierIndex ? "active" : "";
+      tr.innerHTML = `
+        <td class="lead">
+          <div class="radio-cell">
+            <span class="radio"></span>
+            <span class="vinlabel">${t.vins}<small>max VINs</small></span>
+          </div>
+        </td>
+        <td class="num">${fmt(t.salesIn)}</td>
+        <td class="num">${fmt(t.salesOut)}</td>
+        <td class="num colsplit">${fmt(t.servIn)}</td>
+        <td class="num">${fmt(t.servOut)}</td>`;
+      tr.addEventListener("click", () => { state.tierIndex = i; recalc(); });
+      tb.appendChild(tr);
+    });
+  }
+
+  // ---- Recalculate ----
+  function recalc() {
+    const t = TIERS[state.tierIndex];
+
+    // active rows
+    document.querySelectorAll("#tierBody tr").forEach((tr, i) => {
+      tr.className = i === state.tierIndex ? "active" : "";
+    });
+
+    // agent prices + line items
+    let subtotal = 0;
+    const li = document.getElementById("lineItems");
+    li.innerHTML = "";
+    AGENTS.forEach(a => {
+      const price = t[a.key];
+      const on = state.agents[a.key];
+      // update step-2 price labels
+      const pl = document.querySelector(`[data-price="${a.key}"]`);
+      pl.textContent = fmt(price);
+      pl.classList.toggle("off", !on);
+      if (on) {
+        subtotal += price;
+        const row = document.createElement("div");
+        row.className = "line";
+        row.innerHTML = `<span class="l">${a.label}</span><span class="v num">${fmt(price)}</span>`;
+        li.appendChild(row);
+      }
+    });
+    if (subtotal === 0) {
+      li.innerHTML = `<div class="line muted"><span class="l">No agents selected</span><span class="v num">$0</span></div>`;
+    }
+
+    // discounts
+    const allFour = AGENTS.every(a => state.agents[a.key]);
+    const bundleAmt = allFour ? subtotal * BUNDLE_DISCOUNT : 0;
+    const afterBundle = subtotal - bundleAmt;
+
+    const gDisc = groupDiscount(state.groups);
+    const groupAmt = afterBundle * gDisc;
+    const perRooftop = afterBundle - groupAmt;
+
+    // bundle line
+    const bl = document.getElementById("bundleLine");
+    if (allFour && subtotal > 0) {
+      bl.style.display = "flex";
+      document.getElementById("bundleVal").textContent = "− " + fmt(bundleAmt);
+    } else { bl.style.display = "none"; }
+
+    // group line
+    const gl = document.getElementById("groupLine");
+    if (gDisc > 0 && subtotal > 0) {
+      gl.style.display = "flex";
+      document.getElementById("groupLbl").textContent = `Group volume discount (${Math.round(gDisc*100)}%)`;
+      document.getElementById("groupVal").textContent = "− " + fmt(groupAmt);
+    } else { gl.style.display = "none"; }
+
+    // totals
+    document.getElementById("perRooftop").textContent = fmt(perRooftop);
+    const blended = perRooftop > 0 ? perRooftop / t.vins : 0;
+    document.getElementById("blended").textContent = fmt2(blended) + " / VIN";
+
+    const monthlyTotal = perRooftop * state.groups;
+    document.getElementById("grpCountFoot").textContent = state.groups;
+    document.getElementById("monthlyTotal").textContent = fmt(monthlyTotal);
+    document.getElementById("annualTotal").textContent = fmt(monthlyTotal * 12);
+
+    // group tier pill
+    const pill = document.getElementById("grpTier");
+    if (gDisc > 0) {
+      pill.className = "tier-pill on";
+      pill.textContent = `${Math.round(gDisc*100)}% volume discount`;
+    } else {
+      pill.className = "tier-pill";
+      pill.textContent = "No volume discount";
+    }
+
+    renderInsights({ t, subtotal, allFour, gDisc, perRooftop, monthlyTotal });
+  }
+
+  // ---- Insights ----
+  const ICONS = {
+    up:   '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>',
+    info: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>',
+    warn: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+  };
+  function insItem(kind, html) {
+    return `<li class="ins-item"><span class="ico ico-${kind}">${ICONS[kind]}</span><span>${html}</span></li>`;
+  }
+  function renderInsights({ t, subtotal, allFour, gDisc, perRooftop, monthlyTotal }) {
+    const out = [];
+    const activeCount = AGENTS.filter(a => state.agents[a.key]).length;
+
+    if (activeCount === 0) {
+      out.push(insItem("warn", "No agents are active. Turn on at least one VINI agent in Step 2 to see pricing."));
+    }
+
+    // Bundle nudge
+    if (!allFour && activeCount > 0) {
+      const full = AGENTS.reduce((s,a) => s + t[a.key], 0);
+      const wouldSave = full * BUNDLE_DISCOUNT;
+      out.push(insItem("up", `Running <b>all four agents</b> unlocks a 10% bundle discount, worth about <b>${fmt(wouldSave)}/mo</b> per rooftop. You have ${activeCount} of 4 active.`));
+    } else if (allFour) {
+      out.push(insItem("up", `<b>Full VINI stack active.</b> The 10% all-agents bundle discount is applied.`));
+    }
+
+    // Group nudge
+    if (state.groups < 3) {
+      out.push(insItem("info", `Add <b>${3 - state.groups} more rooftop(s)</b> (3 total) to reach the 10% volume tier.`));
+    } else if (state.groups < 7) {
+      out.push(insItem("info", `You are at the 10% volume tier. Reaching <b>7 rooftops</b> steps you up to 20%.`));
+    } else {
+      out.push(insItem("up", `<b>Top volume tier reached</b> at 20% off for ${state.groups} rooftops.`));
+    }
+
+    // Blended value framing
+    if (perRooftop > 0) {
+      const blended = perRooftop / t.vins;
+      out.push(insItem("info", `Effective rate is <b>${fmt2(blended)}/VIN</b> at the ${t.vins}-VIN tier. Higher VIN tiers lower the blended per-VIN cost.`));
+    }
+
+    document.getElementById("insights").innerHTML = out.join("");
+  }
+
+  // ---- Events ----
+  document.querySelectorAll('[data-agent]').forEach(cb => {
+    cb.addEventListener("change", e => {
+      state.agents[e.target.dataset.agent] = e.target.checked;
+      recalc();
+    });
+  });
+  function setGroups(v) {
+    state.groups = Math.max(1, Math.min(999, v || 1));
+    document.getElementById("grpInput").value = state.groups;
+    recalc();
+  }
+  document.getElementById("grpMinus").addEventListener("click", () => setGroups(state.groups - 1));
+  document.getElementById("grpPlus").addEventListener("click", () => setGroups(state.groups + 1));
+  document.getElementById("grpInput").addEventListener("input", e => {
+    const v = parseInt(e.target.value.replace(/\D/g, ""), 10);
+    if (!isNaN(v)) setGroups(v);
+  });
+
+  // ---- Init ----
+  renderTiers();
+  recalc();
+</script>
+</body>
+</html>
