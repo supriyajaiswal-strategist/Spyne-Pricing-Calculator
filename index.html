@@ -112,8 +112,6 @@
     content: ""; position: absolute; left: 4.5px; top: 1.5px; width: 4px; height: 8px;
     border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg);
   }
-  .chip .price { font-family: var(--font-mono); font-size: 11.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
-  .chip.on .price { color: var(--brand); }
 
   /* VIN segmented */
   .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
@@ -194,25 +192,13 @@
   .int-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 16px; }
   .int-summary { font-family: var(--font-mono); font-size: 12px; color: var(--ink-2); white-space: nowrap; }
   .int-summary b { color: var(--brand); font-weight: 600; }
-  .int-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-  @media (max-width: 560px) { .int-grid { grid-template-columns: 1fr; } }
-  .int-item {
-    display: flex; align-items: center; justify-content: space-between; gap: 10px;
-    padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; cursor: pointer;
-    transition: border-color 0.12s, background 0.12s; user-select: none;
-  }
-  .int-item:hover { border-color: #cbd5e1; }
-  .int-item.on { border-color: var(--brand); background: var(--brand-soft); }
   .int-left { display: flex; align-items: center; gap: 9px; min-width: 0; }
   .int-box { width: 16px; height: 16px; border-radius: 5px; border: 1.5px solid var(--muted); flex: 0 0 auto; position: relative; transition: 0.12s; }
-  .int-item.on .int-box { border-color: var(--brand); background: var(--brand); }
-  .int-item.on .int-box::after { content: ""; position: absolute; left: 4.5px; top: 1.5px; width: 4px; height: 8px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); }
   .int-meta { display: flex; flex-direction: column; min-width: 0; }
   .int-name { font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .int-type { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
   .int-cost { font-family: var(--font-mono); font-size: 12.5px; font-weight: 600; color: var(--ink-2); flex: 0 0 auto; }
   .int-cost.tbd { color: var(--muted); font-weight: 500; }
-  .int-item.on .int-cost { color: var(--brand); }
 
   /* Integrations dropdown */
   .int-dropdown { position: relative; }
@@ -430,11 +416,13 @@
         <div class="sum-body">
           <div id="lineItems"></div>
           <div class="divider"></div>
-          <div class="line discount" id="savingsLine" style="display:none">
-            <span class="l" id="savingsLbl">You save</span>
-            <span class="v" id="savingsVal"></span>
+          <div id="savingsWrap" style="display:none">
+            <div class="line discount">
+              <span class="l" id="savingsLbl">You save</span>
+              <span class="v" id="savingsVal"></span>
+            </div>
+            <div class="divider"></div>
           </div>
-          <div class="divider"></div>
           <div class="total-line">
             <div>
               <div class="l">Per rooftop / mo</div>
@@ -651,9 +639,9 @@
     const totalSaved = subtotal - perRooftop;
 
     // savings summary (post-discount values are already shown per agent)
-    const sv = document.getElementById("savingsLine");
+    const sv = document.getElementById("savingsWrap");
     if (totalSaved > 0.5 && subtotal > 0) {
-      sv.style.display = "flex";
+      sv.style.display = "block";
       const parts = [];
       if (allFour) parts.push("10% bundle");
       if (gDisc > 0) parts.push(`${Math.round(gDisc*100)}% volume`);
@@ -727,10 +715,8 @@
       vbn.innerHTML = `Top tier. 20% volume discount applied across all rooftops.`;
     }
 
-    // total savings banner
-    const grossPerRooftop = subtotal;
-    const savedPerRooftop = grossPerRooftop - perRooftop;
-    const savedTotal = savedPerRooftop * state.groups;
+    // total savings banner (totalSaved computed above)
+    const savedTotal = totalSaved * state.groups;
     const sb = document.getElementById("saveBanner");
     if (savedTotal > 0) {
       sb.className = "save-banner";
