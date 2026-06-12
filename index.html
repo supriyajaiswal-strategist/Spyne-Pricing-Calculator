@@ -39,11 +39,10 @@
   }
 
   .num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
-
   .wrap { max-width: 1180px; margin: 0 auto; padding: 40px 28px 80px; }
 
   /* Header */
-  header.page { margin-bottom: 32px; }
+  header.page { margin-bottom: 28px; }
   .eyebrow {
     font-size: 12px; font-weight: 600; letter-spacing: 0.08em;
     text-transform: uppercase; color: var(--brand);
@@ -51,26 +50,87 @@
   }
   .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--brand); }
   h1.title { font-size: 30px; font-weight: 700; letter-spacing: -0.02em; margin: 0 0 8px; }
-  .subtitle { font-size: 15px; color: var(--ink-2); max-width: 620px; margin: 0; }
-
-  /* Layout */
-  .grid { display: grid; grid-template-columns: 1fr 380px; gap: 24px; align-items: start; }
-  @media (max-width: 940px) { .grid { grid-template-columns: 1fr; } }
+  .subtitle { font-size: 15px; color: var(--ink-2); max-width: 640px; margin: 0; }
 
   /* Card */
   .card {
     background: var(--surface); border: 1px solid var(--line);
-    border-radius: 14px; padding: 22px 24px; margin-bottom: 20px;
+    border-radius: 14px; padding: 22px 24px;
   }
-  .step-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 4px; }
-  .step-tag {
-    font-family: var(--font-mono); font-size: 11px; font-weight: 600;
-    color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase;
-  }
-  .step-title { font-size: 17px; font-weight: 700; margin: 0; letter-spacing: -0.01em; }
-  .step-sub { font-size: 13px; color: var(--muted); margin: 2px 0 18px; }
 
-  /* Tier table */
+  /* Config bar */
+  .config-card { margin-bottom: 22px; }
+  .config-grid {
+    display: grid; grid-template-columns: auto 1fr auto; gap: 28px; align-items: start;
+  }
+  @media (max-width: 860px) { .config-grid { grid-template-columns: 1fr; gap: 22px; } }
+
+  .ctrl-label {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase;
+    color: var(--muted); margin: 0 0 10px; display: flex; align-items: center; gap: 6px;
+  }
+  .ctrl-label .step {
+    font-family: var(--font-mono); font-size: 10px; background: var(--line-2);
+    color: var(--ink-2); padding: 1px 6px; border-radius: 5px; letter-spacing: 0.02em;
+  }
+  .ctrl-sub { font-size: 11px; color: var(--muted); margin: 8px 0 0; }
+
+  /* Rooftops stepper */
+  .stepper { display: flex; align-items: center; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; width: max-content; }
+  .stepper button {
+    width: 40px; height: 44px; border: none; background: var(--surface); cursor: pointer;
+    font-size: 19px; color: var(--ink-2); font-family: var(--font-sans);
+  }
+  .stepper button:hover { background: var(--line-2); }
+  .stepper input {
+    width: 60px; height: 44px; border: none; border-left: 1px solid var(--line); border-right: 1px solid var(--line);
+    text-align: center; font-family: var(--font-mono); font-size: 16px; font-weight: 600; color: var(--ink);
+  }
+  .stepper input:focus { outline: none; }
+
+  /* Agent chips */
+  .chip-row { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
+    border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px 8px 10px;
+    font-size: 13px; font-weight: 500; color: var(--ink-2); background: var(--surface);
+    transition: border-color 0.12s, background 0.12s, color 0.12s; user-select: none;
+  }
+  .chip:hover { border-color: #cbd5e1; }
+  .chip.on { border-color: var(--brand); background: var(--brand-soft); color: var(--ink); }
+  .chip .box {
+    width: 16px; height: 16px; border-radius: 5px; border: 1.5px solid var(--muted);
+    flex: 0 0 auto; position: relative; transition: 0.12s;
+  }
+  .chip.on .box { border-color: var(--brand); background: var(--brand); }
+  .chip.on .box::after {
+    content: ""; position: absolute; left: 4.5px; top: 1.5px; width: 4px; height: 8px;
+    border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg);
+  }
+  .chip .price { font-family: var(--font-mono); font-size: 11.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+  .chip.on .price { color: var(--brand); }
+  .chip-prod { font-size: 11px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; width: 100%; margin: 4px 0 -2px; }
+  .chip-prod:first-child { margin-top: 0; }
+
+  /* VIN segmented */
+  .seg { display: inline-flex; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
+  .seg button {
+    border: none; background: var(--surface); cursor: pointer; padding: 10px 0; width: 64px;
+    font-family: var(--font-mono); font-size: 15px; font-weight: 600; color: var(--ink-2);
+    border-left: 1px solid var(--line); transition: background 0.12s, color 0.12s;
+  }
+  .seg button:first-child { border-left: none; }
+  .seg button:hover { background: var(--line-2); }
+  .seg button.on { background: var(--brand); color: #fff; }
+
+  /* Layout below */
+  .grid { display: grid; grid-template-columns: 1fr 380px; gap: 24px; align-items: start; }
+  @media (max-width: 940px) { .grid { grid-template-columns: 1fr; } }
+
+  .panel-title { font-size: 13px; font-weight: 700; margin: 0 0 2px; letter-spacing: -0.01em; }
+  .panel-sub { font-size: 12px; color: var(--muted); margin: 0 0 16px; }
+
+  /* Compare table */
   table.tier { width: 100%; border-collapse: collapse; }
   table.tier thead th {
     font-size: 11px; font-weight: 600; letter-spacing: 0.03em; text-transform: uppercase;
@@ -79,7 +139,7 @@
   table.tier thead th.lead { text-align: left; }
   .grouphdr th {
     font-size: 11px; font-weight: 700; letter-spacing: 0.05em; text-transform: uppercase;
-    color: var(--ink-2); padding: 10px 10px 4px; text-align: center; border: none;
+    color: var(--ink-2); padding: 4px 10px; text-align: center; border: none;
   }
   table.tier tbody td {
     padding: 11px 10px; border-bottom: 1px solid var(--line-2);
@@ -89,73 +149,17 @@
   table.tier tbody tr { cursor: pointer; transition: background 0.12s; }
   table.tier tbody tr:hover { background: var(--line-2); }
   table.tier tbody tr.active { background: var(--brand-soft); }
-  table.tier tbody tr.active td { color: var(--ink); }
-  .radio-cell { display: flex; align-items: center; gap: 10px; }
-  .radio {
-    width: 16px; height: 16px; border-radius: 50%; border: 1.5px solid var(--muted);
-    flex: 0 0 auto; position: relative; transition: border-color 0.12s;
-  }
-  tr.active .radio { border-color: var(--brand); }
-  tr.active .radio::after {
-    content: ""; position: absolute; inset: 3px; border-radius: 50%; background: var(--brand);
-  }
   .vinlabel { font-weight: 600; font-family: var(--font-mono); }
   .vinlabel small { font-family: var(--font-sans); color: var(--muted); font-weight: 500; font-size: 11px; display: block; }
+  td.off, th.off { color: var(--muted); opacity: 0.45; }
   .colsplit { border-left: 1px solid var(--line); }
-
-  /* Agents */
-  .agent-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  @media (max-width: 560px) { .agent-grid { grid-template-columns: 1fr; } }
-  .product-block { border: 1px solid var(--line); border-radius: 12px; padding: 14px 16px; }
-  .product-name { font-size: 13px; font-weight: 700; margin: 0 0 2px; }
-  .product-desc { font-size: 11.5px; color: var(--muted); margin: 0 0 12px; }
-  .agent-row {
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 9px 0; border-top: 1px solid var(--line-2);
-  }
-  .agent-row:first-of-type { border-top: none; }
-  .agent-left { display: flex; align-items: center; gap: 10px; }
-  .agent-name { font-size: 13.5px; font-weight: 500; }
-  .agent-price { font-size: 13px; color: var(--ink-2); }
-  .agent-price.off { color: var(--muted); }
-
-  /* Toggle */
-  .toggle { position: relative; width: 36px; height: 20px; flex: 0 0 auto; cursor: pointer; }
-  .toggle input { opacity: 0; width: 0; height: 0; }
-  .slider {
-    position: absolute; inset: 0; background: #cbd5e1; border-radius: 999px; transition: 0.16s;
-  }
-  .slider::before {
-    content: ""; position: absolute; height: 16px; width: 16px; left: 2px; top: 2px;
-    background: #fff; border-radius: 50%; transition: 0.16s; box-shadow: 0 1px 2px rgba(0,0,0,0.2);
-  }
-  .toggle input:checked + .slider { background: var(--brand); }
-  .toggle input:checked + .slider::before { transform: translateX(16px); }
-
-  /* Groups stepper */
-  .groups-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
-  .stepper { display: flex; align-items: center; gap: 0; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; }
-  .stepper button {
-    width: 38px; height: 40px; border: none; background: var(--surface); cursor: pointer;
-    font-size: 18px; color: var(--ink-2); font-family: var(--font-sans);
-  }
-  .stepper button:hover { background: var(--line-2); }
-  .stepper input {
-    width: 56px; height: 40px; border: none; border-left: 1px solid var(--line); border-right: 1px solid var(--line);
-    text-align: center; font-family: var(--font-mono); font-size: 15px; font-weight: 600; color: var(--ink);
-  }
-  .stepper input:focus { outline: none; }
-  .tier-pill {
-    font-family: var(--font-mono); font-size: 11px; font-weight: 600; padding: 4px 9px;
-    border-radius: 999px; background: var(--line-2); color: var(--ink-2);
-  }
-  .tier-pill.on { background: var(--brand-soft); color: var(--brand); }
 
   /* Summary (right) */
   .summary { position: sticky; top: 24px; }
   .summary .card { padding: 0; overflow: hidden; }
-  .sum-head { padding: 18px 22px 14px; border-bottom: 1px solid var(--line); }
+  .sum-head { padding: 18px 22px 14px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: baseline; }
   .sum-head .lbl { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+  .sum-head .ctx { font-family: var(--font-mono); font-size: 11px; color: var(--ink-2); }
   .sum-body { padding: 16px 22px; }
   .line { display: flex; justify-content: space-between; align-items: baseline; padding: 7px 0; font-size: 13.5px; }
   .line .l { color: var(--ink-2); }
@@ -183,19 +187,19 @@
   .cta:hover { opacity: 0.92; }
 
   /* Insights */
+  .insights { margin-top: 20px; }
   .insights .card { padding: 18px 22px; }
   .ins-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
-  .ins-head svg { width: 15px; height: 15px; stroke: var(--brand); }
+  .ins-head svg { width: 15px; height: 15px; stroke: var(--brand); fill: none; }
   .ins-head .t { font-size: 13px; font-weight: 700; }
   .ins-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 11px; }
   .ins-item { display: flex; gap: 9px; font-size: 12.5px; color: var(--ink-2); line-height: 1.5; }
   .ins-item .ico { flex: 0 0 auto; margin-top: 1px; }
-  .ins-item .ico svg { width: 14px; height: 14px; }
+  .ins-item .ico svg { width: 14px; height: 14px; fill: none; }
   .ico-up svg { stroke: var(--success); }
   .ico-info svg { stroke: var(--link); }
   .ico-warn svg { stroke: var(--warn); }
   .ins-item b { font-weight: 600; color: var(--ink); }
-  .ins-item .cta-inline { color: var(--link); text-decoration: underline dotted; cursor: pointer; }
 
   .note { font-size: 11.5px; color: var(--muted); margin-top: 14px; line-height: 1.5; }
   .note b { color: var(--ink-2); font-weight: 600; }
@@ -206,19 +210,44 @@
   <header class="page">
     <div class="eyebrow"><span class="dot"></span> VINI · Voice AI Agents</div>
     <h1 class="title">Pricing Calculator</h1>
-    <p class="subtitle">Configure your VINI deployment and see a real-time cost breakdown with usage-based insights. Pricing is per rooftop, per month.</p>
+    <p class="subtitle">Set your rooftops, agents, and VIN tier to see a real-time cost breakdown. Pricing is per rooftop, per month.</p>
   </header>
 
-  <div class="grid">
-    <!-- LEFT: configuration -->
-    <div class="config">
-      <!-- Step 1 -->
-      <section class="card">
-        <div class="step-head">
-          <span class="step-tag">Step 1</span>
-          <h2 class="step-title">Select Max VINs &amp; plan</h2>
+  <!-- CONFIG BAR -->
+  <section class="card config-card">
+    <div class="config-grid">
+      <!-- Rooftops -->
+      <div>
+        <p class="ctrl-label"><span class="step">1</span> Rooftops</p>
+        <div class="stepper">
+          <button id="grpMinus" aria-label="Decrease">&minus;</button>
+          <input id="grpInput" class="num" type="text" value="1" inputmode="numeric" />
+          <button id="grpPlus" aria-label="Increase">+</button>
         </div>
-        <p class="step-sub">Pick the monthly VIN tier for each rooftop. Prices shown are per agent, per rooftop.</p>
+        <p class="ctrl-sub" id="grpSub">No volume discount</p>
+      </div>
+
+      <!-- Agents -->
+      <div>
+        <p class="ctrl-label"><span class="step">2</span> Agents</p>
+        <div class="chip-row" id="agentChips"></div>
+      </div>
+
+      <!-- VINs -->
+      <div>
+        <p class="ctrl-label"><span class="step">3</span> Max VINs / rooftop</p>
+        <div class="seg" id="vinSeg"></div>
+        <p class="ctrl-sub">Applies to every selected agent</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="grid">
+    <!-- LEFT: detail + compare -->
+    <div>
+      <section class="card">
+        <p class="panel-title">Price by VIN tier</p>
+        <p class="panel-sub">Per agent, per rooftop, per month. Columns dim when an agent is off. Click a row to switch tier.</p>
         <table class="tier">
           <thead>
             <tr class="grouphdr">
@@ -228,82 +257,14 @@
             </tr>
             <tr>
               <th class="lead">Max VINs</th>
-              <th>Inbound</th>
-              <th>Outbound</th>
-              <th class="colsplit">Inbound</th>
-              <th>Outbound</th>
+              <th data-col="salesIn">Inbound</th>
+              <th data-col="salesOut">Outbound</th>
+              <th data-col="servIn" class="colsplit">Inbound</th>
+              <th data-col="servOut">Outbound</th>
             </tr>
           </thead>
           <tbody id="tierBody"></tbody>
         </table>
-      </section>
-
-      <!-- Step 2 -->
-      <section class="card">
-        <div class="step-head">
-          <span class="step-tag">Step 2</span>
-          <h2 class="step-title">Choose your agents</h2>
-        </div>
-        <p class="step-sub">Activate the VINI agents you want to deploy. Run all four to unlock the bundle discount.</p>
-        <div class="agent-grid">
-          <div class="product-block">
-            <p class="product-name">VINI Sales</p>
-            <p class="product-desc">Lead qualification &amp; outreach</p>
-            <div class="agent-row">
-              <div class="agent-left">
-                <label class="toggle"><input type="checkbox" data-agent="salesIn" checked><span class="slider"></span></label>
-                <span class="agent-name">Inbound</span>
-              </div>
-              <span class="agent-price num" data-price="salesIn"></span>
-            </div>
-            <div class="agent-row">
-              <div class="agent-left">
-                <label class="toggle"><input type="checkbox" data-agent="salesOut" checked><span class="slider"></span></label>
-                <span class="agent-name">Outbound</span>
-              </div>
-              <span class="agent-price num" data-price="salesOut"></span>
-            </div>
-          </div>
-
-          <div class="product-block">
-            <p class="product-name">VINI Service</p>
-            <p class="product-desc">Support &amp; retention calls</p>
-            <div class="agent-row">
-              <div class="agent-left">
-                <label class="toggle"><input type="checkbox" data-agent="servIn" checked><span class="slider"></span></label>
-                <span class="agent-name">Inbound</span>
-              </div>
-              <span class="agent-price num" data-price="servIn"></span>
-            </div>
-            <div class="agent-row">
-              <div class="agent-left">
-                <label class="toggle"><input type="checkbox" data-agent="servOut" checked><span class="slider"></span></label>
-                <span class="agent-name">Outbound</span>
-              </div>
-              <span class="agent-price num" data-price="servOut"></span>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Step 3 -->
-      <section class="card">
-        <div class="step-head">
-          <span class="step-tag">Step 3</span>
-          <h2 class="step-title">Group size</h2>
-        </div>
-        <p class="step-sub">How many rooftops in the group? Larger groups unlock volume discounts.</p>
-        <div class="groups-row">
-          <div class="stepper">
-            <button id="grpMinus" aria-label="Decrease">&minus;</button>
-            <input id="grpInput" class="num" type="text" value="1" inputmode="numeric" />
-            <button id="grpPlus" aria-label="Increase">+</button>
-          </div>
-          <div id="grpTier" class="tier-pill">No volume discount</div>
-        </div>
-        <p class="note">
-          <b>Volume tiers:</b> under 3 rooftops 0% &nbsp;·&nbsp; 3 to 6 rooftops 10% &nbsp;·&nbsp; 7 or more rooftops 20%.
-        </p>
       </section>
     </div>
 
@@ -312,6 +273,7 @@
       <section class="card">
         <div class="sum-head">
           <span class="lbl">Cost breakdown</span>
+          <span class="ctx"><span id="ctxVins">100</span> VINs · <span id="ctxGrp">1</span> rooftop(s)</span>
         </div>
         <div class="sum-body">
           <div id="lineItems"></div>
@@ -356,7 +318,7 @@
       <section class="insights">
         <div class="card">
           <div class="ins-head">
-            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a7 7 0 0 0-4 12.7V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.3A7 7 0 0 0 12 2Z"/><path d="M9 21h6"/></svg>
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a7 7 0 0 0-4 12.7V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.3A7 7 0 0 0 12 2Z"/><path d="M9 21h6"/></svg>
             <span class="t">Insights</span>
           </div>
           <ul class="ins-list" id="insights"></ul>
@@ -368,7 +330,6 @@
 
 <script>
   // ---- Pricing model (from Vini Price.xlsx) ----
-  // Per agent, per rooftop, per month.
   const TIERS = [
     { vins: 50,  salesIn: 900,  salesOut: 1150, servIn: 1100, servOut: 1399 },
     { vins: 100, salesIn: 1500, salesOut: 2250, servIn: 1800, servOut: 2700 },
@@ -376,12 +337,12 @@
     { vins: 300, salesIn: 3000, salesOut: 4500, servIn: 3600, servOut: 5400 },
   ];
   const AGENTS = [
-    { key: "salesIn",  label: "VINI Sales · Inbound" },
-    { key: "salesOut", label: "VINI Sales · Outbound" },
-    { key: "servIn",   label: "VINI Service · Inbound" },
-    { key: "servOut",  label: "VINI Service · Outbound" },
+    { key: "salesIn",  prod: "VINI Sales",   label: "Inbound",  full: "VINI Sales · Inbound" },
+    { key: "salesOut", prod: "VINI Sales",   label: "Outbound", full: "VINI Sales · Outbound" },
+    { key: "servIn",   prod: "VINI Service", label: "Inbound",  full: "VINI Service · Inbound" },
+    { key: "servOut",  prod: "VINI Service", label: "Outbound", full: "VINI Service · Outbound" },
   ];
-  const BUNDLE_DISCOUNT = 0.10; // all 4 agents
+  const BUNDLE_DISCOUNT = 0.10;
 
   const state = {
     tierIndex: 1,                       // default 100 VINs
@@ -389,33 +350,58 @@
     groups: 1,
   };
 
-  const fmt   = n => "$" + Math.round(n).toLocaleString("en-US");
-  const fmt2  = n => "$" + n.toLocaleString("en-US", {minimumFractionDigits:2, maximumFractionDigits:2});
+  const fmt  = n => "$" + Math.round(n).toLocaleString("en-US");
+  const fmt2 = n => "$" + n.toLocaleString("en-US", {minimumFractionDigits:2, maximumFractionDigits:2});
+  const groupDiscount = g => g >= 7 ? 0.20 : (g >= 3 ? 0.10 : 0);
 
-  function groupDiscount(g) {
-    if (g >= 7) return 0.20;
-    if (g >= 3) return 0.10;
-    return 0;
+  // ---- Build controls ----
+  function renderAgentChips() {
+    const wrap = document.getElementById("agentChips");
+    wrap.innerHTML = "";
+    let lastProd = null;
+    AGENTS.forEach(a => {
+      if (a.prod !== lastProd) {
+        const h = document.createElement("div");
+        h.className = "chip-prod";
+        h.textContent = a.prod;
+        wrap.appendChild(h);
+        lastProd = a.prod;
+      }
+      const chip = document.createElement("label");
+      chip.className = "chip" + (state.agents[a.key] ? " on" : "");
+      chip.dataset.agent = a.key;
+      chip.innerHTML = `<span class="box"></span><span>${a.label}</span><span class="price" data-chip-price="${a.key}"></span>`;
+      chip.addEventListener("click", e => {
+        e.preventDefault();
+        state.agents[a.key] = !state.agents[a.key];
+        recalc();
+      });
+      wrap.appendChild(chip);
+    });
   }
 
-  // ---- Render tier table ----
-  function renderTiers() {
+  function renderVinSeg() {
+    const seg = document.getElementById("vinSeg");
+    seg.innerHTML = "";
+    TIERS.forEach((t, i) => {
+      const b = document.createElement("button");
+      b.textContent = t.vins;
+      b.className = i === state.tierIndex ? "on" : "";
+      b.addEventListener("click", () => { state.tierIndex = i; recalc(); });
+      seg.appendChild(b);
+    });
+  }
+
+  function renderTierTable() {
     const tb = document.getElementById("tierBody");
     tb.innerHTML = "";
     TIERS.forEach((t, i) => {
       const tr = document.createElement("tr");
       tr.className = i === state.tierIndex ? "active" : "";
+      const cell = key => `<td class="num ${state.agents[key] ? "" : "off"}${key==="servIn" ? " colsplit" : ""}">${fmt(t[key])}</td>`;
       tr.innerHTML = `
-        <td class="lead">
-          <div class="radio-cell">
-            <span class="radio"></span>
-            <span class="vinlabel">${t.vins}<small>max VINs</small></span>
-          </div>
-        </td>
-        <td class="num">${fmt(t.salesIn)}</td>
-        <td class="num">${fmt(t.salesOut)}</td>
-        <td class="num colsplit">${fmt(t.servIn)}</td>
-        <td class="num">${fmt(t.servOut)}</td>`;
+        <td class="lead"><span class="vinlabel">${t.vins}<small>max VINs</small></span></td>
+        ${cell("salesIn")}${cell("salesOut")}${cell("servIn")}${cell("servOut")}`;
       tr.addEventListener("click", () => { state.tierIndex = i; recalc(); });
       tb.appendChild(tr);
     });
@@ -425,27 +411,31 @@
   function recalc() {
     const t = TIERS[state.tierIndex];
 
-    // active rows
-    document.querySelectorAll("#tierBody tr").forEach((tr, i) => {
-      tr.className = i === state.tierIndex ? "active" : "";
+    // sync controls
+    renderVinSeg();
+    renderTierTable();
+    document.querySelectorAll(".chip").forEach(c => {
+      c.classList.toggle("on", state.agents[c.dataset.agent]);
+    });
+    AGENTS.forEach(a => {
+      const cp = document.querySelector(`[data-chip-price="${a.key}"]`);
+      if (cp) cp.textContent = fmt(t[a.key]);
+    });
+    // dim table header cols for off agents
+    document.querySelectorAll("[data-col]").forEach(th => {
+      th.classList.toggle("off", !state.agents[th.dataset.col]);
     });
 
-    // agent prices + line items
+    // line items + subtotal
     let subtotal = 0;
     const li = document.getElementById("lineItems");
     li.innerHTML = "";
     AGENTS.forEach(a => {
-      const price = t[a.key];
-      const on = state.agents[a.key];
-      // update step-2 price labels
-      const pl = document.querySelector(`[data-price="${a.key}"]`);
-      pl.textContent = fmt(price);
-      pl.classList.toggle("off", !on);
-      if (on) {
-        subtotal += price;
+      if (state.agents[a.key]) {
+        subtotal += t[a.key];
         const row = document.createElement("div");
         row.className = "line";
-        row.innerHTML = `<span class="l">${a.label}</span><span class="v num">${fmt(price)}</span>`;
+        row.innerHTML = `<span class="l">${a.full}</span><span class="v num">${fmt(t[a.key])}</span>`;
         li.appendChild(row);
       }
     });
@@ -457,19 +447,16 @@
     const allFour = AGENTS.every(a => state.agents[a.key]);
     const bundleAmt = allFour ? subtotal * BUNDLE_DISCOUNT : 0;
     const afterBundle = subtotal - bundleAmt;
-
     const gDisc = groupDiscount(state.groups);
     const groupAmt = afterBundle * gDisc;
     const perRooftop = afterBundle - groupAmt;
 
-    // bundle line
     const bl = document.getElementById("bundleLine");
     if (allFour && subtotal > 0) {
       bl.style.display = "flex";
       document.getElementById("bundleVal").textContent = "− " + fmt(bundleAmt);
     } else { bl.style.display = "none"; }
 
-    // group line
     const gl = document.getElementById("groupLine");
     if (gDisc > 0 && subtotal > 0) {
       gl.style.display = "flex";
@@ -483,50 +470,41 @@
     document.getElementById("blended").textContent = fmt2(blended) + " / VIN";
 
     const monthlyTotal = perRooftop * state.groups;
-    document.getElementById("grpCountFoot").textContent = state.groups;
     document.getElementById("monthlyTotal").textContent = fmt(monthlyTotal);
     document.getElementById("annualTotal").textContent = fmt(monthlyTotal * 12);
 
-    // group tier pill
-    const pill = document.getElementById("grpTier");
-    if (gDisc > 0) {
-      pill.className = "tier-pill on";
-      pill.textContent = `${Math.round(gDisc*100)}% volume discount`;
-    } else {
-      pill.className = "tier-pill";
-      pill.textContent = "No volume discount";
-    }
+    // context + subs
+    document.getElementById("ctxVins").textContent = t.vins;
+    document.getElementById("ctxGrp").textContent = state.groups;
+    document.getElementById("grpCountFoot").textContent = state.groups;
+    const gs = document.getElementById("grpSub");
+    gs.textContent = gDisc > 0 ? `${Math.round(gDisc*100)}% volume discount` : "No volume discount";
+    gs.style.color = gDisc > 0 ? "var(--success)" : "var(--muted)";
 
-    renderInsights({ t, subtotal, allFour, gDisc, perRooftop, monthlyTotal });
+    renderInsights({ t, allFour, perRooftop });
   }
 
   // ---- Insights ----
   const ICONS = {
-    up:   '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>',
-    info: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>',
-    warn: '<svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+    up:   '<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>',
+    info: '<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>',
+    warn: '<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
   };
-  function insItem(kind, html) {
-    return `<li class="ins-item"><span class="ico ico-${kind}">${ICONS[kind]}</span><span>${html}</span></li>`;
-  }
-  function renderInsights({ t, subtotal, allFour, gDisc, perRooftop, monthlyTotal }) {
+  const insItem = (k, html) => `<li class="ins-item"><span class="ico ico-${k}">${ICONS[k]}</span><span>${html}</span></li>`;
+
+  function renderInsights({ t, allFour, perRooftop }) {
     const out = [];
     const activeCount = AGENTS.filter(a => state.agents[a.key]).length;
 
     if (activeCount === 0) {
-      out.push(insItem("warn", "No agents are active. Turn on at least one VINI agent in Step 2 to see pricing."));
+      out.push(insItem("warn", "No agents are active. Turn one on in step 2 to see pricing."));
     }
-
-    // Bundle nudge
     if (!allFour && activeCount > 0) {
       const full = AGENTS.reduce((s,a) => s + t[a.key], 0);
-      const wouldSave = full * BUNDLE_DISCOUNT;
-      out.push(insItem("up", `Running <b>all four agents</b> unlocks a 10% bundle discount, worth about <b>${fmt(wouldSave)}/mo</b> per rooftop. You have ${activeCount} of 4 active.`));
+      out.push(insItem("up", `Running <b>all four agents</b> unlocks a 10% bundle discount, worth about <b>${fmt(full*BUNDLE_DISCOUNT)}/mo</b> per rooftop. You have ${activeCount} of 4 active.`));
     } else if (allFour) {
       out.push(insItem("up", `<b>Full VINI stack active.</b> The 10% all-agents bundle discount is applied.`));
     }
-
-    // Group nudge
     if (state.groups < 3) {
       out.push(insItem("info", `Add <b>${3 - state.groups} more rooftop(s)</b> (3 total) to reach the 10% volume tier.`));
     } else if (state.groups < 7) {
@@ -534,23 +512,13 @@
     } else {
       out.push(insItem("up", `<b>Top volume tier reached</b> at 20% off for ${state.groups} rooftops.`));
     }
-
-    // Blended value framing
     if (perRooftop > 0) {
-      const blended = perRooftop / t.vins;
-      out.push(insItem("info", `Effective rate is <b>${fmt2(blended)}/VIN</b> at the ${t.vins}-VIN tier. Higher VIN tiers lower the blended per-VIN cost.`));
+      out.push(insItem("info", `Effective rate is <b>${fmt2(perRooftop / t.vins)}/VIN</b> at the ${t.vins}-VIN tier. Higher VIN tiers lower the blended per-VIN cost.`));
     }
-
     document.getElementById("insights").innerHTML = out.join("");
   }
 
-  // ---- Events ----
-  document.querySelectorAll('[data-agent]').forEach(cb => {
-    cb.addEventListener("change", e => {
-      state.agents[e.target.dataset.agent] = e.target.checked;
-      recalc();
-    });
-  });
+  // ---- Rooftop stepper ----
   function setGroups(v) {
     state.groups = Math.max(1, Math.min(999, v || 1));
     document.getElementById("grpInput").value = state.groups;
@@ -564,7 +532,7 @@
   });
 
   // ---- Init ----
-  renderTiers();
+  renderAgentChips();
   recalc();
 </script>
 </body>
