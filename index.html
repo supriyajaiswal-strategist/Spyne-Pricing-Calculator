@@ -40,7 +40,7 @@
   }
 
   .num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
-  .wrap { max-width: 1180px; margin: 0 auto; padding: 40px 28px 80px; }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 40px 28px 110px; }
 
   /* Header */
   header.page { margin-bottom: 28px; }
@@ -136,6 +136,42 @@
   .tab.active { color: var(--brand); border-bottom-color: var(--brand); }
   .calc { display: none; }
   .calc.active { display: block; }
+
+  /* Studio add-on rows */
+  .addon-list { display: flex; flex-direction: column; gap: 10px; }
+  .addon-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px; cursor: pointer;
+    transition: border-color 0.12s, background 0.12s; user-select: none;
+  }
+  .addon-row:hover { border-color: #cbd5e1; }
+  .addon-row.on { border-color: var(--brand); background: var(--brand-soft); }
+  .addon-left { display: flex; align-items: center; gap: 11px; }
+  .addon-box { width: 18px; height: 18px; border-radius: 5px; border: 1.5px solid var(--muted); flex: 0 0 auto; position: relative; transition: 0.12s; }
+  .addon-row.on .addon-box { border-color: var(--brand); background: var(--brand); }
+  .addon-row.on .addon-box::after { content: ""; position: absolute; left: 5.5px; top: 2px; width: 4px; height: 8px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); }
+  .addon-name { font-size: 14px; font-weight: 600; display: block; }
+  .addon-desc { font-size: 12px; color: var(--muted); }
+  .addon-price { font-family: var(--font-mono); font-size: 14px; font-weight: 600; color: var(--ink-2); }
+  .addon-row.on .addon-price { color: var(--brand); }
+
+  /* Combined total bar */
+  .combined-bar {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 50; background: var(--surface);
+    border-top: 1px solid var(--line); box-shadow: 0 -8px 24px -16px rgba(15,23,42,0.30);
+  }
+  .cb-inner { max-width: 1180px; margin: 0 auto; padding: 12px 28px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+  .cb-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); display: block; margin-bottom: 3px; }
+  .cb-parts { font-size: 13px; color: var(--ink-2); display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+  .cb-parts b { font-weight: 700; color: var(--ink); font-family: var(--font-mono); }
+  .cb-plus { color: var(--muted); }
+  .cb-right { display: flex; align-items: baseline; gap: 14px; }
+  .cb-total { display: flex; align-items: baseline; gap: 4px; }
+  .cb-total .num { font-size: 24px; font-weight: 700; color: var(--brand); letter-spacing: -0.01em; }
+  .cb-mo { font-size: 12px; color: var(--muted); }
+  .cb-annual { font-size: 12px; color: var(--ink-2); white-space: nowrap; }
+  .cb-annual .num { font-weight: 700; }
+  @media (max-width: 560px) { .cb-label { display: none; } .cb-inner { padding: 10px 16px; gap: 12px; } }
 
   /* Layout below */
   .grid { display: grid; grid-template-columns: 1fr 380px; gap: 24px; align-items: start; }
@@ -533,7 +569,7 @@
         <section class="card" style="margin-top:20px">
           <p class="panel-title">Add-ons</p>
           <p class="panel-sub">Optional modules, priced per rooftop at your selected VIN tier.</p>
-          <div class="chip-row" id="sAddonChips" style="flex-wrap:wrap"></div>
+          <div class="addon-list" id="sAddonChips"></div>
         </section>
       </div>
 
@@ -588,6 +624,24 @@
   </div><!-- /calc-studio -->
 </div>
 
+<!-- COMBINED TOTAL BAR -->
+<div class="combined-bar" id="combinedBar">
+  <div class="cb-inner">
+    <div class="cb-left">
+      <span class="cb-label">VINI + Studio combined</span>
+      <span class="cb-parts">
+        <span>VINI <b id="cbVini">$0</b>/mo</span>
+        <span class="cb-plus">+</span>
+        <span>Studio <b id="cbStudio">$0</b>/mo</span>
+      </span>
+    </div>
+    <div class="cb-right">
+      <div class="cb-total"><span class="num" id="cbMonthly">$0</span><span class="cb-mo">/mo total</span></div>
+      <div class="cb-annual"><span class="num" id="cbAnnual">$0</span> / yr</div>
+    </div>
+  </div>
+</div>
+
 <script>
   // ---- Pricing model (from Vini Price.xlsx) ----
   const TIERS = [
@@ -636,6 +690,16 @@
   const fmt  = n => "$" + Math.round(n).toLocaleString("en-US");
   const fmt2 = n => "$" + n.toLocaleString("en-US", {minimumFractionDigits:2, maximumFractionDigits:2});
   const groupDiscount = g => g >= 7 ? 0.20 : (g >= 3 ? 0.10 : 0);
+
+  // Combined VINI + Studio total (shown in the fixed bottom bar)
+  const totals = { vini: 0, studio: 0 };
+  function updateCombined() {
+    const combined = totals.vini + totals.studio;
+    document.getElementById("cbVini").textContent = fmt(totals.vini);
+    document.getElementById("cbStudio").textContent = fmt(totals.studio);
+    document.getElementById("cbMonthly").textContent = fmt(combined);
+    document.getElementById("cbAnnual").textContent = fmt(combined * 12);
+  }
 
   // ---- Build controls ----
   function renderAgentChips() {
@@ -796,6 +860,7 @@
     }
     document.getElementById("monthlyTotal").textContent = fmt(monthlyTotal);
     document.getElementById("annualTotal").textContent = fmt(monthlyTotal * 12);
+    totals.vini = monthlyTotal; updateCombined();
 
     // Discounts section
     const activeCount = AGENTS.filter(a => state.agents[a.key]).length;
@@ -921,8 +986,8 @@
   ];
   const STUDIO_PLANS  = [ { key: "lite", label: "Studio Lite" }, { key: "pro", label: "Studio Pro" } ];
   const STUDIO_ADDONS = [
-    { key: "smartMatch",     label: "SmartMatch" },
-    { key: "smartCampaigns", label: "SmartCampaigns" },
+    { key: "smartMatch",     label: "SmartMatch",     desc: "New + Pre-owned inventory matching" },
+    { key: "smartCampaigns", label: "SmartCampaigns", desc: "Automated marketing campaigns" },
   ];
 
   const studio = {
@@ -949,11 +1014,11 @@
     const t = STUDIO_TIERS[studio.tierIndex];
     wrap.innerHTML = "";
     STUDIO_ADDONS.forEach(ad => {
-      const chip = document.createElement("label");
-      chip.className = "chip" + (studio.addons[ad.key] ? " on" : "");
-      chip.innerHTML = `<span class="box"></span><span class="chip-text"><b>${ad.label}</b> ${fmt(t[ad.key])}</span>`;
-      chip.addEventListener("click", e => { e.preventDefault(); studio.addons[ad.key] = !studio.addons[ad.key]; sRecalc(); });
-      wrap.appendChild(chip);
+      const row = document.createElement("div");
+      row.className = "addon-row" + (studio.addons[ad.key] ? " on" : "");
+      row.innerHTML = `<div class="addon-left"><span class="addon-box"></span><span class="addon-meta"><span class="addon-name">${ad.label}</span><span class="addon-desc">${ad.desc}</span></span></div><span class="addon-price">${fmt(t[ad.key])}</span>`;
+      row.addEventListener("click", () => { studio.addons[ad.key] = !studio.addons[ad.key]; sRecalc(); });
+      wrap.appendChild(row);
     });
   }
 
@@ -1009,6 +1074,7 @@
     document.getElementById("sBlended").textContent = fmt2(perRooftop / t.vins) + " / VIN";
     document.getElementById("sMonthly").textContent = fmt(monthly);
     document.getElementById("sAnnual").textContent = fmt(monthly * 12);
+    totals.studio = monthly; updateCombined();
     document.getElementById("sCtxVins").textContent = t.vins;
     document.getElementById("sCtxGrp").textContent = studio.groups;
     document.getElementById("sGrpFoot").textContent = studio.groups;
