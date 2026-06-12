@@ -61,7 +61,7 @@
   /* Config bar */
   .config-card { margin-bottom: 22px; }
   .config-grid {
-    display: grid; grid-template-columns: auto 1fr auto; gap: 28px; align-items: start;
+    display: grid; grid-template-columns: auto 1fr; gap: 36px; align-items: start;
   }
   @media (max-width: 860px) { .config-grid { grid-template-columns: 1fr; gap: 22px; } }
 
@@ -69,10 +69,12 @@
     font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase;
     color: var(--muted); margin: 0 0 10px; display: flex; align-items: center; gap: 6px;
   }
-  .ctrl-label .step {
+  .step {
     font-family: var(--font-mono); font-size: 10px; background: var(--line-2);
     color: var(--ink-2); padding: 1px 6px; border-radius: 5px; letter-spacing: 0.02em;
   }
+  .panel-title { display: flex; align-items: center; gap: 8px; }
+  .panel-title .step { font-size: 11px; }
   .ctrl-sub { font-size: 11px; color: var(--muted); margin: 8px 0 0; }
 
   /* Rooftops stepper */
@@ -232,13 +234,6 @@
         <p class="ctrl-label"><span class="step">2</span> Agents</p>
         <div class="chip-row" id="agentChips"></div>
       </div>
-
-      <!-- VINs -->
-      <div>
-        <p class="ctrl-label"><span class="step">3</span> Max VINs / rooftop</p>
-        <div class="seg" id="vinSeg"></div>
-        <p class="ctrl-sub">Applies to every selected agent</p>
-      </div>
     </div>
   </section>
 
@@ -246,8 +241,8 @@
     <!-- LEFT: detail + compare -->
     <div>
       <section class="card">
-        <p class="panel-title">Price by VIN tier</p>
-        <p class="panel-sub">Per agent, per rooftop, per month. Columns dim when an agent is off. Click a row to switch tier.</p>
+        <p class="panel-title"><span class="step">3</span> Select Max VINs / rooftop</p>
+        <p class="panel-sub">Click a row to set the VIN tier. Prices are per agent, per rooftop, per month. Columns dim when an agent is off.</p>
         <table class="tier">
           <thead>
             <tr class="grouphdr">
@@ -380,18 +375,6 @@
     });
   }
 
-  function renderVinSeg() {
-    const seg = document.getElementById("vinSeg");
-    seg.innerHTML = "";
-    TIERS.forEach((t, i) => {
-      const b = document.createElement("button");
-      b.textContent = t.vins;
-      b.className = i === state.tierIndex ? "on" : "";
-      b.addEventListener("click", () => { state.tierIndex = i; recalc(); });
-      seg.appendChild(b);
-    });
-  }
-
   function renderTierTable() {
     const tb = document.getElementById("tierBody");
     tb.innerHTML = "";
@@ -412,7 +395,6 @@
     const t = TIERS[state.tierIndex];
 
     // sync controls
-    renderVinSeg();
     renderTierTable();
     document.querySelectorAll(".chip").forEach(c => {
       c.classList.toggle("on", state.agents[c.dataset.agent]);
