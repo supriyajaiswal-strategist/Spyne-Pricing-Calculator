@@ -190,6 +190,30 @@
   .save-banner.flat { background: var(--line-2); }
   .save-banner.flat b { color: var(--ink); }
 
+  /* Integrations */
+  .int-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 16px; }
+  .int-summary { font-family: var(--font-mono); font-size: 12px; color: var(--ink-2); white-space: nowrap; }
+  .int-summary b { color: var(--brand); font-weight: 600; }
+  .int-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+  @media (max-width: 560px) { .int-grid { grid-template-columns: 1fr; } }
+  .int-item {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; cursor: pointer;
+    transition: border-color 0.12s, background 0.12s; user-select: none;
+  }
+  .int-item:hover { border-color: #cbd5e1; }
+  .int-item.on { border-color: var(--brand); background: var(--brand-soft); }
+  .int-left { display: flex; align-items: center; gap: 9px; min-width: 0; }
+  .int-box { width: 16px; height: 16px; border-radius: 5px; border: 1.5px solid var(--muted); flex: 0 0 auto; position: relative; transition: 0.12s; }
+  .int-item.on .int-box { border-color: var(--brand); background: var(--brand); }
+  .int-item.on .int-box::after { content: ""; position: absolute; left: 4.5px; top: 1.5px; width: 4px; height: 8px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); }
+  .int-meta { display: flex; flex-direction: column; min-width: 0; }
+  .int-name { font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .int-type { font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.04em; }
+  .int-cost { font-family: var(--font-mono); font-size: 12.5px; font-weight: 600; color: var(--ink-2); flex: 0 0 auto; }
+  .int-cost.tbd { color: var(--muted); font-weight: 500; }
+  .int-item.on .int-cost { color: var(--brand); }
+
   /* Summary (right) — floating cart */
   .summary { position: sticky; top: 24px; }
   .summary .card { padding: 0; overflow: hidden; }
@@ -331,6 +355,17 @@
         </div>
         <p class="save-banner" id="saveBanner"></p>
       </section>
+
+      <section class="card" style="margin-top:20px">
+        <div class="int-head">
+          <div>
+            <p class="panel-title">Integrations</p>
+            <p class="panel-sub">Pass-through cost, billed per rooftop and split equally across the agents on a rooftop. Items without a confirmed rate show TBD.</p>
+          </div>
+          <span class="int-summary" id="intSummary">None selected</span>
+        </div>
+        <div class="int-grid" id="intGrid"></div>
+      </section>
     </div>
 
     <!-- RIGHT: summary + insights -->
@@ -369,8 +404,17 @@
         </div>
         <div class="sum-foot">
           <div class="annual-row">
-            <span class="l">Total monthly · <span id="grpCountFoot" class="num">1</span> rooftop(s)</span>
-            <span class="v num" id="monthlyTotal">$0</span>
+            <span class="l">Agents · <span id="grpCountFoot" class="num">1</span> rooftop(s)</span>
+            <span class="v num" id="agentsTotal">$0</span>
+          </div>
+          <div class="annual-row" id="intFootRow" style="margin-top:8px; display:none">
+            <span class="l">Integrations · <span class="num" id="grpCountFoot2">1</span> rooftop(s)</span>
+            <span class="v num" id="intTotal">$0</span>
+          </div>
+          <div class="divider" style="margin:12px 0 10px"></div>
+          <div class="annual-row">
+            <span class="l" style="font-size:13px">Total monthly</span>
+            <span class="v num" id="monthlyTotal" style="font-size:18px">$0</span>
           </div>
           <div class="annual-row" style="margin-top:8px">
             <span class="l">Annual contract value</span>
@@ -378,7 +422,7 @@
           </div>
           <button class="cta">Request a formal quote</button>
           <p class="note" style="margin-top:12px">
-            <b>Integrations</b> (DMS / CRM connectors) are billed as a pass-through cost and are not included above. Details shared during scoping.
+            <b>Integrations</b> are billed per rooftop as a pass-through cost, split equally across the agents on a rooftop. Items marked TBD are confirmed during scoping.
           </p>
         </div>
       </section>
@@ -412,10 +456,33 @@
   ];
   const BUNDLE_DISCOUNT = 0.10;
 
+  // Integration providers — cost is per rooftop, per month (null = pricing TBD).
+  // Add new rows here as the list grows.
+  const INTEGRATIONS = [
+    { name: "Vinsolutions",            type: "sales",    cost: 95 },
+    { name: "CDK (Elead)",             type: "sales",    cost: 500 },
+    { name: "CDK Drive",               type: "service",  cost: 3400 },
+    { name: "Dealersocket (Solera)",   type: "sales",    cost: 200 },
+    { name: "Tekion (CRM and DMS)",    type: "sales",    cost: null },
+    { name: "xTime",                   type: "service",  cost: 291 },
+    { name: "Update Promise",          type: "sales",    cost: null },
+    { name: "Dealerbuilt/Lightyear",   type: "sales",    cost: null },
+    { name: "MyKaarma",                type: "sales",    cost: 62 },
+    { name: "PBS",                     type: "service",  cost: null },
+    { name: "DealerFX",                type: "sales",    cost: null },
+    { name: "Reynolds Services US",    type: "service",  cost: 1300 },
+    { name: "Reynolds Services Canada",type: "service",  cost: null },
+    { name: "Reynolds CRM US",         type: "sales",    cost: 1300 },
+    { name: "Reynolds CRM Canada",     type: "sales",    cost: null },
+    { name: "Evox",                    type: "cji",      cost: 83 },
+    { name: "clearvin",                type: "vincheck", cost: 483 },
+  ];
+
   const state = {
     tierIndex: 1,                       // default 100 VINs
     agents: { salesIn:true, salesOut:true, servIn:true, servOut:true },
     groups: 1,
+    integrations: {},                   // index -> boolean
   };
 
   const fmt  = n => "$" + Math.round(n).toLocaleString("en-US");
@@ -438,6 +505,27 @@
         recalc();
       });
       wrap.appendChild(chip);
+    });
+  }
+
+  function renderIntegrations() {
+    const grid = document.getElementById("intGrid");
+    grid.innerHTML = "";
+    INTEGRATIONS.forEach((it, i) => {
+      const el = document.createElement("div");
+      el.className = "int-item" + (state.integrations[i] ? " on" : "");
+      el.dataset.int = i;
+      const cost = it.cost == null
+        ? `<span class="int-cost tbd">TBD</span>`
+        : `<span class="int-cost">${fmt(it.cost)}</span>`;
+      el.innerHTML = `<span class="int-left"><span class="int-box"></span><span class="int-meta"><span class="int-name">${it.name}</span><span class="int-type">${it.type}</span></span></span>${cost}`;
+      el.addEventListener("click", () => { state.integrations[i] = !state.integrations[i]; recalc(); });
+      grid.appendChild(el);
+    });
+  }
+  function syncIntegrations() {
+    document.querySelectorAll(".int-item").forEach(el => {
+      el.classList.toggle("on", !!state.integrations[Number(el.dataset.int)]);
     });
   }
 
@@ -513,7 +601,31 @@
     const blended = perRooftop > 0 ? perRooftop / t.vins : 0;
     document.getElementById("blended").textContent = fmt2(blended) + " / VIN";
 
-    const monthlyTotal = perRooftop * state.groups;
+    // integrations (pass-through, per rooftop)
+    let intCost = 0, intCount = 0, intTbd = 0;
+    INTEGRATIONS.forEach((it, i) => {
+      if (state.integrations[i]) { intCount++; it.cost == null ? intTbd++ : (intCost += it.cost); }
+    });
+    syncIntegrations();
+    const intSummaryEl = document.getElementById("intSummary");
+    intSummaryEl.innerHTML = intCount === 0
+      ? "None selected"
+      : `<b>${intCount}</b> selected · <b>${fmt(intCost)}</b>/rooftop` + (intTbd ? ` · ${intTbd} TBD` : "");
+
+    const agentsTotal = perRooftop * state.groups;
+    const intTotal = intCost * state.groups;
+    const monthlyTotal = agentsTotal + intTotal;
+
+    document.getElementById("agentsTotal").textContent = fmt(agentsTotal);
+    const intRow = document.getElementById("intFootRow");
+    if (intCount > 0) {
+      intRow.style.display = "flex";
+      document.getElementById("grpCountFoot2").textContent = state.groups;
+      document.getElementById("intTotal").textContent =
+        (intCost === 0 && intTbd > 0) ? "TBD" : fmt(intTotal);
+    } else {
+      intRow.style.display = "none";
+    }
     document.getElementById("monthlyTotal").textContent = fmt(monthlyTotal);
     document.getElementById("annualTotal").textContent = fmt(monthlyTotal * 12);
 
@@ -623,6 +735,7 @@
 
   // ---- Init ----
   renderAgentChips();
+  renderIntegrations();
   recalc();
 </script>
 </body>
