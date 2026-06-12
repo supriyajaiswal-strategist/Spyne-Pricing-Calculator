@@ -359,7 +359,7 @@
       chip.className = "chip" + (state.agents[a.key] ? " on" : "");
       chip.dataset.agent = a.key;
       const short = a.prod.replace("VINI ", "");
-      chip.innerHTML = `<span class="box"></span><span class="chip-text"><b>${short}</b> ${a.label}</span><span class="price" data-chip-price="${a.key}"></span>`;
+      chip.innerHTML = `<span class="box"></span><span class="chip-text"><b>${short}</b> ${a.label}</span>`;
       chip.addEventListener("click", e => {
         e.preventDefault();
         state.agents[a.key] = !state.agents[a.key];
@@ -392,10 +392,6 @@
     renderTierTable();
     document.querySelectorAll(".chip").forEach(c => {
       c.classList.toggle("on", state.agents[c.dataset.agent]);
-    });
-    AGENTS.forEach(a => {
-      const cp = document.querySelector(`[data-chip-price="${a.key}"]`);
-      if (cp) cp.textContent = fmt(t[a.key]);
     });
     // dim table header cols for off agents
     document.querySelectorAll("[data-col]").forEach(th => {
