@@ -3,7 +3,8 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>VINI Pricing Calculator</title>
+<title>Spyne Pricing Calculator</title>
+<meta name="description" content="Spyne's Pricing Calculator" />
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -135,10 +136,6 @@
   .tab.active { color: var(--brand); border-bottom-color: var(--brand); }
   .calc { display: none; }
   .calc.active { display: block; }
-
-  /* Studio tier table */
-  .studio-tier td small { display: block; font-family: var(--font-sans); font-size: 10px; color: var(--muted); font-weight: 500; margin-top: 1px; }
-  .studio-tier .plan-sel { color: var(--brand); }
 
   /* Layout below */
   .grid { display: grid; grid-template-columns: 1fr 380px; gap: 24px; align-items: start; }
@@ -520,13 +517,13 @@
       <div>
         <section class="card">
           <p class="panel-title"><span class="step">3</span> Select Max VINs / rooftop</p>
-          <p class="panel-sub">Click a row to set the VIN tier. Prices are per rooftop, per month. Your selected plan is highlighted.</p>
+          <p class="panel-sub">Click a row to set the VIN tier. Showing prices for your selected plan, per rooftop, per month.</p>
           <table class="tier studio-tier">
             <thead>
               <tr>
                 <th class="lead">Max VINs</th>
-                <th data-splan="lite">Studio Lite</th>
-                <th data-splan="pro">Studio Pro</th>
+                <th id="sPlanHdr">Studio Lite · /rooftop</th>
+                <th>Price / VIN</th>
               </tr>
             </thead>
             <tbody id="sTierBody"></tbody>
@@ -595,9 +592,9 @@
   // ---- Pricing model (from Vini Price.xlsx) ----
   const TIERS = [
     { vins: 50,  salesIn: 900,  salesOut: 1150, servIn: 1100, servOut: 1399 },
-    { vins: 100, salesIn: 1500, salesOut: 2250, servIn: 1800, servOut: 2700 },
-    { vins: 200, salesIn: 2000, salesOut: 3000, servIn: 2400, servOut: 3600 },
-    { vins: 300, salesIn: 3000, salesOut: 4500, servIn: 3600, servOut: 5400 },
+    { vins: 100, salesIn: 1200, salesOut: 1800, servIn: 1440, servOut: 2160 },
+    { vins: 200, salesIn: 1600, salesOut: 2400, servIn: 1920, servOut: 2880 },
+    { vins: 300, salesIn: 2100, salesOut: 3150, servIn: 2520, servOut: 3780 },
   ];
   const AGENTS = [
     { key: "salesIn",  prod: "VINI Sales",   label: "Inbound",  full: "VINI Sales · Inbound" },
@@ -963,18 +960,18 @@
   function renderStudioTier() {
     const tb = document.getElementById("sTierBody");
     tb.innerHTML = "";
+    const plan = studio.plan;
     STUDIO_TIERS.forEach((t, i) => {
       const tr = document.createElement("tr");
       tr.className = i === studio.tierIndex ? "active" : "";
-      const cell = key => `<td class="num${studio.plan === key ? " plan-sel" : ""}">${fmt(t[key])}<small>${fmt2(t[key]/t.vins)}/VIN</small></td>`;
-      tr.innerHTML = `<td class="lead"><span class="vinlabel">${t.vins}<small>max VINs</small></span></td>${cell("lite")}${cell("pro")}`;
+      tr.innerHTML = `<td class="lead"><span class="vinlabel">${t.vins}<small>max VINs</small></span></td>` +
+        `<td class="num">${fmt(t[plan])}</td>` +
+        `<td class="num">${fmt2(t[plan]/t.vins)}</td>`;
       tr.addEventListener("click", () => { studio.tierIndex = i; sRecalc(); });
       tb.appendChild(tr);
     });
-    // mark selected plan column header
-    document.querySelectorAll("[data-splan]").forEach(th => {
-      th.classList.toggle("plan-sel", th.dataset.splan === studio.plan);
-    });
+    document.getElementById("sPlanHdr").textContent =
+      (plan === "lite" ? "Studio Lite" : "Studio Pro") + " · /rooftop";
   }
 
   function sRecalc() {
