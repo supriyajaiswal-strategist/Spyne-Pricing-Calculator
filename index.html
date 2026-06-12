@@ -214,6 +214,46 @@
   .int-cost.tbd { color: var(--muted); font-weight: 500; }
   .int-item.on .int-cost { color: var(--brand); }
 
+  /* Integrations dropdown */
+  .int-dropdown { position: relative; }
+  .int-trigger {
+    display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%;
+    padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface);
+    cursor: pointer; font-family: var(--font-sans); font-size: 13.5px; color: var(--ink-2); text-align: left;
+  }
+  .int-trigger:hover { border-color: #cbd5e1; }
+  .int-trigger .chev { width: 16px; height: 16px; stroke: var(--muted); fill: none; flex: 0 0 auto; transition: transform 0.15s; }
+  .int-dropdown.open .int-trigger { border-color: var(--brand); }
+  .int-dropdown.open .int-trigger .chev { transform: rotate(180deg); }
+  .int-menu {
+    position: absolute; top: calc(100% + 6px); left: 0; right: 0; z-index: 30;
+    background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+    box-shadow: 0 18px 44px -14px rgba(15,23,42,0.30); padding: 6px; max-height: 340px; overflow-y: auto; display: none;
+  }
+  .int-dropdown.open .int-menu { display: block; }
+  .int-opt {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    padding: 9px 10px; border-radius: 8px; cursor: pointer;
+  }
+  .int-opt:hover { background: var(--line-2); }
+  .int-opt.on { background: var(--brand-soft); }
+  .int-opt.on .int-cost { color: var(--brand); }
+  .int-opt.on .int-box { border-color: var(--brand); background: var(--brand); }
+  .int-opt.on .int-box::after { content: ""; position: absolute; left: 4.5px; top: 1.5px; width: 4px; height: 8px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); }
+  .int-selected { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .int-tag {
+    display: inline-flex; align-items: center; gap: 8px; padding: 6px 6px 6px 12px;
+    border: 1px solid var(--line); border-radius: 999px; background: var(--brand-soft); font-size: 12.5px;
+  }
+  .int-tag .tname { font-weight: 500; color: var(--ink); }
+  .int-tag .tcost { font-family: var(--font-mono); font-size: 11.5px; color: var(--brand); }
+  .int-tag .tcost.tbd { color: var(--muted); }
+  .int-tag .x {
+    cursor: pointer; width: 17px; height: 17px; display: flex; align-items: center; justify-content: center;
+    border-radius: 50%; color: var(--muted); font-size: 11px; line-height: 1;
+  }
+  .int-tag .x:hover { background: #fff; color: var(--bad); }
+
   /* Summary (right) — floating cart */
   .summary { position: sticky; top: 24px; }
   .summary .card { padding: 0; overflow: hidden; }
@@ -366,7 +406,14 @@
           </div>
           <span class="int-summary" id="intSummary">None selected</span>
         </div>
-        <div class="int-grid" id="intGrid"></div>
+        <div class="int-dropdown" id="intDropdown">
+          <button class="int-trigger" id="intTrigger" type="button">
+            <span id="intTriggerLabel">Select integrations</span>
+            <svg class="chev" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          <div class="int-menu" id="intMenu"></div>
+        </div>
+        <div class="int-selected" id="intSelected"></div>
       </section>
     </div>
 
@@ -507,24 +554,41 @@
   }
 
   function renderIntegrations() {
-    const grid = document.getElementById("intGrid");
-    grid.innerHTML = "";
+    const menu = document.getElementById("intMenu");
+    menu.innerHTML = "";
     INTEGRATIONS.forEach((it, i) => {
       const el = document.createElement("div");
-      el.className = "int-item" + (state.integrations[i] ? " on" : "");
+      el.className = "int-opt" + (state.integrations[i] ? " on" : "");
       el.dataset.int = i;
       const cost = it.cost == null
         ? `<span class="int-cost tbd">TBD</span>`
         : `<span class="int-cost">${fmt(it.cost)}</span>`;
       el.innerHTML = `<span class="int-left"><span class="int-box"></span><span class="int-meta"><span class="int-name">${it.name}</span><span class="int-type">${it.type}</span></span></span>${cost}`;
-      el.addEventListener("click", () => { state.integrations[i] = !state.integrations[i]; recalc(); });
-      grid.appendChild(el);
+      el.addEventListener("click", e => { e.stopPropagation(); state.integrations[i] = !state.integrations[i]; recalc(); });
+      menu.appendChild(el);
     });
   }
   function syncIntegrations() {
-    document.querySelectorAll(".int-item").forEach(el => {
+    // menu checkmarks
+    document.querySelectorAll(".int-opt").forEach(el => {
       el.classList.toggle("on", !!state.integrations[Number(el.dataset.int)]);
     });
+    // selected chips
+    const wrap = document.getElementById("intSelected");
+    wrap.innerHTML = "";
+    let count = 0;
+    INTEGRATIONS.forEach((it, i) => {
+      if (!state.integrations[i]) return;
+      count++;
+      const tag = document.createElement("span");
+      tag.className = "int-tag";
+      const cost = it.cost == null ? `<span class="tcost tbd">TBD</span>` : `<span class="tcost">${fmt(it.cost)}</span>`;
+      tag.innerHTML = `<span class="tname">${it.name}</span>${cost}<span class="x" title="Remove">✕</span>`;
+      tag.querySelector(".x").addEventListener("click", e => { e.stopPropagation(); state.integrations[i] = false; recalc(); });
+      wrap.appendChild(tag);
+    });
+    document.getElementById("intTriggerLabel").textContent =
+      count === 0 ? "Select integrations" : `${count} integration${count > 1 ? "s" : ""} selected`;
   }
 
   function renderTierTable() {
@@ -732,6 +796,16 @@
   document.getElementById("grpInput").addEventListener("input", e => {
     const v = parseInt(e.target.value.replace(/\D/g, ""), 10);
     if (!isNaN(v)) setGroups(v);
+  });
+
+  // ---- Integrations dropdown open/close ----
+  const intDD = document.getElementById("intDropdown");
+  document.getElementById("intTrigger").addEventListener("click", e => {
+    e.stopPropagation();
+    intDD.classList.toggle("open");
+  });
+  document.addEventListener("click", e => {
+    if (!intDD.contains(e.target)) intDD.classList.remove("open");
   });
 
   // ---- Init ----
