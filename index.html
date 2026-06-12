@@ -123,6 +123,22 @@
   .seg button:first-child { border-left: none; }
   .seg button:hover { background: var(--line-2); }
   .seg button.on { background: var(--brand); color: #fff; }
+  .seg.wide button { width: auto; padding: 10px 20px; font-family: var(--font-sans); font-size: 13.5px; }
+
+  /* Tabs */
+  .tabs { display: flex; gap: 4px; margin-bottom: 24px; border-bottom: 1px solid var(--line); }
+  .tab {
+    padding: 10px 16px; border: none; background: none; cursor: pointer; font-family: var(--font-sans);
+    font-size: 14px; font-weight: 600; color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -1px;
+  }
+  .tab:hover { color: var(--ink-2); }
+  .tab.active { color: var(--brand); border-bottom-color: var(--brand); }
+  .calc { display: none; }
+  .calc.active { display: block; }
+
+  /* Studio tier table */
+  .studio-tier td small { display: block; font-family: var(--font-sans); font-size: 10px; color: var(--muted); font-weight: 500; margin-top: 1px; }
+  .studio-tier .plan-sel { color: var(--brand); }
 
   /* Layout below */
   .grid { display: grid; grid-template-columns: 1fr 380px; gap: 24px; align-items: start; }
@@ -303,11 +319,18 @@
 <body>
 <div class="wrap">
   <header class="page">
-    <div class="eyebrow"><span class="dot"></span> VINI · Voice AI Agents</div>
+    <div class="eyebrow"><span class="dot"></span> Spyne · Pricing</div>
     <h1 class="title">Pricing Calculator</h1>
-    <p class="subtitle">Set your rooftops, agents, and VIN tier to see a real-time cost breakdown. Pricing is per rooftop, per month.</p>
+    <p class="subtitle">Configure a plan and see a real-time cost breakdown. Pricing is per rooftop, per month.</p>
   </header>
 
+  <div class="tabs">
+    <button class="tab active" data-tab="vini" type="button">VINI · Voice AI</button>
+    <button class="tab" data-tab="studio" type="button">Studio</button>
+  </div>
+
+  <!-- ===================== VINI CALCULATOR ===================== -->
+  <div class="calc active" id="calc-vini">
   <!-- CONFIG BAR -->
   <section class="card config-card">
     <div class="config-grid">
@@ -471,6 +494,101 @@
       </section>
     </div>
   </div>
+  </div><!-- /calc-vini -->
+
+  <!-- ===================== STUDIO CALCULATOR ===================== -->
+  <div class="calc" id="calc-studio">
+    <section class="card config-card">
+      <div class="config-grid">
+        <div>
+          <p class="ctrl-label"><span class="step">1</span> Rooftops</p>
+          <div class="stepper">
+            <button id="sGrpMinus" aria-label="Decrease">&minus;</button>
+            <input id="sGrpInput" class="num" type="text" value="1" inputmode="numeric" />
+            <button id="sGrpPlus" aria-label="Increase">+</button>
+          </div>
+        </div>
+        <div>
+          <p class="ctrl-label"><span class="step">2</span> Plan</p>
+          <div class="seg wide" id="sPlanSeg"></div>
+          <p class="ctrl-sub">Base plan included. Add modules below.</p>
+        </div>
+      </div>
+    </section>
+
+    <div class="grid">
+      <div>
+        <section class="card">
+          <p class="panel-title"><span class="step">3</span> Select Max VINs / rooftop</p>
+          <p class="panel-sub">Click a row to set the VIN tier. Prices are per rooftop, per month. Your selected plan is highlighted.</p>
+          <table class="tier studio-tier">
+            <thead>
+              <tr>
+                <th class="lead">Max VINs</th>
+                <th data-splan="lite">Studio Lite</th>
+                <th data-splan="pro">Studio Pro</th>
+              </tr>
+            </thead>
+            <tbody id="sTierBody"></tbody>
+          </table>
+        </section>
+
+        <section class="card" style="margin-top:20px">
+          <p class="panel-title">Add-ons</p>
+          <p class="panel-sub">Optional modules, priced per rooftop at your selected VIN tier.</p>
+          <div class="chip-row" id="sAddonChips" style="flex-wrap:wrap"></div>
+        </section>
+      </div>
+
+      <div class="summary">
+        <section class="card">
+          <div class="sum-head">
+            <span class="lbl cart-title">
+              <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.7 13.4a2 2 0 0 0 2 1.6h9.7a2 2 0 0 0 2-1.6L23 6H6"/></svg>
+              Your plan <span class="cart-count" id="sCartCount">1</span>
+            </span>
+            <span class="ctx"><span id="sCtxVins">100</span> VINs · <span id="sCtxGrp">1</span> rooftop(s)</span>
+          </div>
+          <div class="sum-body">
+            <div id="sLineItems"></div>
+            <div class="divider"></div>
+            <div class="total-line">
+              <div>
+                <div class="l">Per rooftop / mo</div>
+                <div class="per" id="sPlanLabel">Studio Lite</div>
+              </div>
+              <span class="v num" id="sPerRooftop">$0</span>
+            </div>
+            <div class="blended">
+              <span>Blended per VIN</span>
+              <span class="num" id="sBlended">$0.00</span>
+            </div>
+          </div>
+          <div class="sum-foot">
+            <div class="annual-row">
+              <span class="l">Total monthly · <span class="num" id="sGrpFoot">1</span> rooftop(s)</span>
+              <span class="v num" id="sMonthly">$0</span>
+            </div>
+            <div class="annual-row" style="margin-top:8px">
+              <span class="l">Annual contract value</span>
+              <span class="v num" id="sAnnual" style="color:var(--brand)">$0</span>
+            </div>
+            <button class="cta">Request a formal quote</button>
+          </div>
+        </section>
+
+        <section class="insights">
+          <div class="card">
+            <div class="ins-head">
+              <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a7 7 0 0 0-4 12.7V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.3A7 7 0 0 0 12 2Z"/><path d="M9 21h6"/></svg>
+              <span class="t">Insights</span>
+            </div>
+            <ul class="ins-list" id="sInsights"></ul>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div><!-- /calc-studio -->
 </div>
 
 <script>
@@ -794,10 +912,150 @@
     if (!intDD.contains(e.target)) intDD.classList.remove("open");
   });
 
+  // ========================= STUDIO =========================
+  // Pricing per rooftop, per month (from pricing-calculator-one-wine.vercel.app).
+  // Edit these numbers as needed.
+  const STUDIO_TIERS = [
+    { vins: 50,  lite: 199, pro: 499,  smartMatch: 298, smartCampaigns: 374 },
+    { vins: 100, lite: 349, pro: 849,  smartMatch: 598, smartCampaigns: 524 },
+    { vins: 200, lite: 599, pro: 1499, smartMatch: 748, smartCampaigns: 749 },
+    { vins: 300, lite: 749, pro: 1899, smartMatch: 748, smartCampaigns: 974 },
+    { vins: 400, lite: 799, pro: 1999, smartMatch: 748, smartCampaigns: 1199 },
+  ];
+  const STUDIO_PLANS  = [ { key: "lite", label: "Studio Lite" }, { key: "pro", label: "Studio Pro" } ];
+  const STUDIO_ADDONS = [
+    { key: "smartMatch",     label: "SmartMatch" },
+    { key: "smartCampaigns", label: "SmartCampaigns" },
+  ];
+
+  const studio = {
+    tierIndex: 1,                                  // default 100 VINs
+    plan: "lite",
+    addons: { smartMatch: false, smartCampaigns: false },
+    groups: 1,
+  };
+
+  function renderStudioPlan() {
+    const seg = document.getElementById("sPlanSeg");
+    seg.innerHTML = "";
+    STUDIO_PLANS.forEach(p => {
+      const b = document.createElement("button");
+      b.textContent = p.label;
+      b.className = studio.plan === p.key ? "on" : "";
+      b.addEventListener("click", () => { studio.plan = p.key; sRecalc(); });
+      seg.appendChild(b);
+    });
+  }
+
+  function renderStudioAddons() {
+    const wrap = document.getElementById("sAddonChips");
+    const t = STUDIO_TIERS[studio.tierIndex];
+    wrap.innerHTML = "";
+    STUDIO_ADDONS.forEach(ad => {
+      const chip = document.createElement("label");
+      chip.className = "chip" + (studio.addons[ad.key] ? " on" : "");
+      chip.innerHTML = `<span class="box"></span><span class="chip-text"><b>${ad.label}</b> ${fmt(t[ad.key])}</span>`;
+      chip.addEventListener("click", e => { e.preventDefault(); studio.addons[ad.key] = !studio.addons[ad.key]; sRecalc(); });
+      wrap.appendChild(chip);
+    });
+  }
+
+  function renderStudioTier() {
+    const tb = document.getElementById("sTierBody");
+    tb.innerHTML = "";
+    STUDIO_TIERS.forEach((t, i) => {
+      const tr = document.createElement("tr");
+      tr.className = i === studio.tierIndex ? "active" : "";
+      const cell = key => `<td class="num${studio.plan === key ? " plan-sel" : ""}">${fmt(t[key])}<small>${fmt2(t[key]/t.vins)}/VIN</small></td>`;
+      tr.innerHTML = `<td class="lead"><span class="vinlabel">${t.vins}<small>max VINs</small></span></td>${cell("lite")}${cell("pro")}`;
+      tr.addEventListener("click", () => { studio.tierIndex = i; sRecalc(); });
+      tb.appendChild(tr);
+    });
+    // mark selected plan column header
+    document.querySelectorAll("[data-splan]").forEach(th => {
+      th.classList.toggle("plan-sel", th.dataset.splan === studio.plan);
+    });
+  }
+
+  function sRecalc() {
+    const t = STUDIO_TIERS[studio.tierIndex];
+    renderStudioPlan();
+    renderStudioTier();
+    renderStudioAddons();
+
+    const planPrice = t[studio.plan];
+    const planName = "Studio " + (studio.plan === "lite" ? "Lite" : "Pro");
+
+    const li = document.getElementById("sLineItems");
+    li.innerHTML = "";
+    const planRow = document.createElement("div");
+    planRow.className = "line";
+    planRow.innerHTML = `<span class="l">${planName} · base</span><span class="v net num">${fmt(planPrice)}</span>`;
+    li.appendChild(planRow);
+
+    let addonsSum = 0, addonCount = 0;
+    STUDIO_ADDONS.forEach(ad => {
+      if (studio.addons[ad.key]) {
+        addonsSum += t[ad.key]; addonCount++;
+        const r = document.createElement("div");
+        r.className = "line";
+        r.innerHTML = `<span class="l">${ad.label}</span><span class="v net num">${fmt(t[ad.key])}</span>`;
+        li.appendChild(r);
+      }
+    });
+
+    const perRooftop = planPrice + addonsSum;
+    const monthly = perRooftop * studio.groups;
+
+    document.getElementById("sPerRooftop").textContent = fmt(perRooftop);
+    document.getElementById("sPlanLabel").textContent = planName;
+    document.getElementById("sBlended").textContent = fmt2(perRooftop / t.vins) + " / VIN";
+    document.getElementById("sMonthly").textContent = fmt(monthly);
+    document.getElementById("sAnnual").textContent = fmt(monthly * 12);
+    document.getElementById("sCtxVins").textContent = t.vins;
+    document.getElementById("sCtxGrp").textContent = studio.groups;
+    document.getElementById("sGrpFoot").textContent = studio.groups;
+    document.getElementById("sCartCount").textContent = 1 + addonCount;
+
+    // insights
+    const out = [];
+    if (studio.plan === "lite") {
+      out.push(insItem("info", `Studio Pro adds <b>${fmt(t.pro - t.lite)}/mo</b> per rooftop over Lite at this tier.`));
+    } else {
+      out.push(insItem("up", `<b>Studio Pro active</b> at the ${t.vins}-VIN tier.`));
+    }
+    const offAddon = STUDIO_ADDONS.find(a => !studio.addons[a.key]);
+    if (offAddon) out.push(insItem("info", `Add <b>${offAddon.label}</b> (${fmt(t[offAddon.key])}/mo) to expand coverage.`));
+    out.push(insItem("info", `Blended rate is <b>${fmt2(perRooftop / t.vins)}/VIN</b> at the ${t.vins}-VIN tier. Higher tiers lower the per-VIN cost.`));
+    document.getElementById("sInsights").innerHTML = out.join("");
+  }
+
+  // Studio rooftop stepper
+  function setSGroups(v) {
+    studio.groups = Math.max(1, Math.min(999, v || 1));
+    document.getElementById("sGrpInput").value = studio.groups;
+    sRecalc();
+  }
+  document.getElementById("sGrpMinus").addEventListener("click", () => setSGroups(studio.groups - 1));
+  document.getElementById("sGrpPlus").addEventListener("click", () => setSGroups(studio.groups + 1));
+  document.getElementById("sGrpInput").addEventListener("input", e => {
+    const v = parseInt(e.target.value.replace(/\D/g, ""), 10);
+    if (!isNaN(v)) setSGroups(v);
+  });
+
+  // ---- Tabs ----
+  document.querySelectorAll(".tab").forEach(tab => {
+    tab.addEventListener("click", () => {
+      document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t === tab));
+      document.querySelectorAll(".calc").forEach(c => c.classList.toggle("active", c.id === "calc-" + tab.dataset.tab));
+    });
+  });
+
   // ---- Init ----
   renderAgentChips();
   renderIntegrations();
   recalc();
+  sRecalc();
 </script>
 </body>
 </html>
