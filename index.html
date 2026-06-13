@@ -137,23 +137,53 @@
   .calc { display: none; }
   .calc.active { display: block; }
 
-  /* Studio add-on rows */
-  .addon-list { display: flex; flex-direction: column; gap: 10px; }
-  .addon-row {
-    display: flex; align-items: center; justify-content: space-between; gap: 12px;
-    padding: 12px 14px; border: 1px solid var(--line); border-radius: 10px; cursor: pointer;
-    transition: border-color 0.12s, background 0.12s; user-select: none;
+  /* Studio Features: base plan + add-on cards */
+  .base-plan {
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    padding: 16px 18px; border: 1px solid var(--line); background: #f0fdf4; border-radius: 12px; margin-bottom: 12px;
   }
-  .addon-row:hover { border-color: #cbd5e1; }
-  .addon-row.on { border-color: var(--brand); background: var(--brand-soft); }
-  .addon-left { display: flex; align-items: center; gap: 11px; }
-  .addon-box { width: 18px; height: 18px; border-radius: 5px; border: 1.5px solid var(--muted); flex: 0 0 auto; position: relative; transition: 0.12s; }
-  .addon-row.on .addon-box { border-color: var(--brand); background: var(--brand); }
-  .addon-row.on .addon-box::after { content: ""; position: absolute; left: 5.5px; top: 2px; width: 4px; height: 8px; border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg); }
-  .addon-name { font-size: 14px; font-weight: 600; display: block; }
-  .addon-desc { font-size: 12px; color: var(--muted); }
-  .addon-price { font-family: var(--font-mono); font-size: 14px; font-weight: 600; color: var(--ink-2); }
-  .addon-row.on .addon-price { color: var(--brand); }
+  .bp-left { display: flex; align-items: center; gap: 12px; }
+  .bp-left > svg { width: 20px; height: 20px; stroke: var(--success); fill: none; flex: 0 0 auto; }
+  .bp-name { font-size: 15px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+  .bp-badge { font-size: 10.5px; font-weight: 600; color: var(--success); background: #dcfce7; padding: 2px 8px; border-radius: 999px; }
+  .bp-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .bp-price { font-family: var(--font-mono); font-size: 18px; font-weight: 700; color: var(--ink); }
+
+  .addon-list { display: flex; flex-direction: column; gap: 12px; }
+  .addon-card { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; transition: background 0.12s; }
+  .addon-card.on { background: #faf9ff; }
+  .addon-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 18px; cursor: pointer; }
+  .addon-htitle { display: flex; align-items: center; gap: 9px; }
+  .addon-htitle > svg { width: 18px; height: 18px; stroke: var(--brand); fill: none; flex: 0 0 auto; }
+  .addon-name { font-size: 15px; font-weight: 700; }
+  .addon-badge { font-size: 10.5px; font-weight: 600; color: var(--link); background: #eff6ff; padding: 2px 8px; border-radius: 999px; }
+  .addon-chev { width: 15px; height: 15px; stroke: var(--muted); fill: none; transition: transform 0.15s; }
+  .addon-card.collapsed .addon-chev { transform: rotate(180deg); }
+  .addon-hright { display: flex; align-items: center; gap: 14px; }
+  .addon-hprice { font-family: var(--font-mono); font-size: 15px; font-weight: 700; color: var(--ink-2); }
+  .addon-card.on .addon-hprice { color: var(--brand); }
+
+  .switch { position: relative; width: 40px; height: 22px; flex: 0 0 auto; display: inline-block; }
+  .switch input { opacity: 0; width: 0; height: 0; }
+  .switch .track { position: absolute; inset: 0; background: #cbd5e1; border-radius: 999px; transition: 0.16s; cursor: pointer; }
+  .switch .track::before { content: ""; position: absolute; width: 18px; height: 18px; left: 2px; top: 2px; background: #fff; border-radius: 50%; transition: 0.16s; box-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+  .switch input:checked + .track { background: var(--brand); }
+  .switch input:checked + .track::before { transform: translateX(18px); }
+
+  .addon-body { padding: 0 18px 16px; border-top: 1px solid var(--line-2); }
+  .addon-card.collapsed .addon-body { display: none; }
+  .addon-allt { font-size: 11.5px; color: var(--muted); display: flex; align-items: center; gap: 6px; margin: 12px 0; }
+  .addon-allt svg { width: 14px; height: 14px; stroke: var(--muted); fill: none; }
+  .addon-sublabel { font-size: 11px; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--ink-2); margin-bottom: 8px; }
+  .addon-table { width: 100%; border-collapse: collapse; }
+  .addon-table thead th { font-size: 10.5px; text-transform: uppercase; letter-spacing: 0.03em; color: var(--muted); font-weight: 600; text-align: right; padding: 7px 10px; border-bottom: 1px solid var(--line); }
+  .addon-table thead th.lead { text-align: left; }
+  .addon-table tbody td { padding: 9px 10px; font-size: 13px; text-align: right; border-bottom: 1px solid var(--line-2); }
+  .addon-table tbody td.lead { text-align: left; font-family: var(--font-mono); font-weight: 600; }
+  .addon-table tbody tr { cursor: pointer; transition: background 0.12s; }
+  .addon-table tbody tr:hover { background: var(--line-2); }
+  .addon-table tbody tr.active { background: var(--brand-soft); }
+  .addon-table tbody tr.active td { color: var(--brand); font-weight: 600; }
 
   /* Combined total bar */
   .combined-bar {
@@ -567,8 +597,18 @@
         </section>
 
         <section class="card" style="margin-top:20px">
-          <p class="panel-title">Add-ons</p>
-          <p class="panel-sub">Optional modules, priced per rooftop at your selected VIN tier.</p>
+          <p class="panel-title">Features</p>
+          <p class="panel-sub">Your base plan is always included. Toggle add-ons; each is priced per rooftop across all VIN tiers.</p>
+          <div class="base-plan">
+            <div class="bp-left">
+              <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/></svg>
+              <div>
+                <div class="bp-name">Base Plan <span class="bp-badge">Always included</span></div>
+                <div class="bp-sub" id="sBaseSub">$0.00 per VIN</div>
+              </div>
+            </div>
+            <span class="bp-price" id="sBasePrice">$0</span>
+          </div>
           <div class="addon-list" id="sAddonChips"></div>
         </section>
       </div>
@@ -986,8 +1026,14 @@
   ];
   const STUDIO_PLANS  = [ { key: "lite", label: "Studio Lite" }, { key: "pro", label: "Studio Pro" } ];
   const STUDIO_ADDONS = [
-    { key: "smartMatch",     label: "SmartMatch",     desc: "New + Pre-owned inventory matching" },
-    { key: "smartCampaigns", label: "SmartCampaigns", desc: "Automated marketing campaigns" },
+    {
+      key: "smartMatch", label: "SmartMatch", sublabel: "SmartMatch — New + Pre-owned",
+      icon: '<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>',
+    },
+    {
+      key: "smartCampaigns", label: "SmartCampaigns", sublabel: null,
+      icon: '<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>',
+    },
   ];
 
   const studio = {
@@ -1009,16 +1055,51 @@
     });
   }
 
+  const TABLE_ICON = '<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="3" y1="15" x2="21" y2="15"/><line x1="9" y1="3" x2="9" y2="21"/></svg>';
+  const CHEV_UP = '<svg class="addon-chev" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"/></svg>';
+
   function renderStudioAddons() {
     const wrap = document.getElementById("sAddonChips");
-    const t = STUDIO_TIERS[studio.tierIndex];
+    const ct = STUDIO_TIERS[studio.tierIndex];
     wrap.innerHTML = "";
     STUDIO_ADDONS.forEach(ad => {
-      const row = document.createElement("div");
-      row.className = "addon-row" + (studio.addons[ad.key] ? " on" : "");
-      row.innerHTML = `<div class="addon-left"><span class="addon-box"></span><span class="addon-meta"><span class="addon-name">${ad.label}</span><span class="addon-desc">${ad.desc}</span></span></div><span class="addon-price">${fmt(t[ad.key])}</span>`;
-      row.addEventListener("click", () => { studio.addons[ad.key] = !studio.addons[ad.key]; sRecalc(); });
-      wrap.appendChild(row);
+      const on = !!studio.addons[ad.key];
+      const card = document.createElement("div");
+      card.className = "addon-card" + (on ? " on" : "") + (ad._collapsed ? " collapsed" : "");
+
+      let rows = "";
+      STUDIO_TIERS.forEach((t, i) => {
+        rows += `<tr class="${i === studio.tierIndex ? "active" : ""}" data-ti="${i}"><td class="lead">${t.vins}</td><td class="num">${fmt(t[ad.key])}</td><td class="num">${fmt2(t[ad.key]/t.vins)}</td></tr>`;
+      });
+
+      card.innerHTML = `
+        <div class="addon-head">
+          <div class="addon-htitle">${ad.icon}<span class="addon-name">${ad.label}</span><span class="addon-badge">Add-on</span>${CHEV_UP}</div>
+          <div class="addon-hright">
+            <span class="addon-hprice num">${fmt(ct[ad.key])}</span>
+            <label class="switch"><input type="checkbox" ${on ? "checked" : ""}><span class="track"></span></label>
+          </div>
+        </div>
+        <div class="addon-body">
+          <div class="addon-allt">${TABLE_ICON} All-tier pricing</div>
+          ${ad.sublabel ? `<div class="addon-sublabel">${ad.sublabel}</div>` : ""}
+          <table class="addon-table">
+            <thead><tr><th class="lead">Max VINs</th><th>Price / rooftop</th><th>Price / VIN</th></tr></thead>
+            <tbody>${rows}</tbody>
+          </table>
+        </div>`;
+
+      const sw = card.querySelector(".switch input");
+      sw.addEventListener("change", e => { e.stopPropagation(); studio.addons[ad.key] = sw.checked; sRecalc(); });
+      card.querySelector(".addon-head").addEventListener("click", e => {
+        if (e.target.closest(".switch")) return;
+        ad._collapsed = !ad._collapsed;
+        card.classList.toggle("collapsed", ad._collapsed);
+      });
+      card.querySelectorAll("tbody tr").forEach(tr => {
+        tr.addEventListener("click", () => { studio.tierIndex = Number(tr.dataset.ti); sRecalc(); });
+      });
+      wrap.appendChild(card);
     });
   }
 
@@ -1047,6 +1128,10 @@
 
     const planPrice = t[studio.plan];
     const planName = "Studio " + (studio.plan === "lite" ? "Lite" : "Pro");
+
+    // base plan card
+    document.getElementById("sBasePrice").textContent = fmt(planPrice);
+    document.getElementById("sBaseSub").textContent = fmt2(planPrice / t.vins) + " per VIN";
 
     const li = document.getElementById("sLineItems");
     li.innerHTML = "";
