@@ -13,20 +13,27 @@
     --font-sans: "Inter Tight", system-ui, -apple-system, sans-serif;
     --font-mono: "JetBrains Mono", ui-monospace, monospace;
 
-    --bg: #f8fafc;
+    /* Canonical Spyne dashboard tokens — Expansion Playbook (Stripe) look */
+    --bg: #f6f9fc;
     --surface: #ffffff;
-    --ink: #0f172a;
-    --ink-2: #334155;
-    --muted: #94a3b8;
-    --line: #e2e8f0;
-    --line-2: #f1f5f9;
+    --ink: #0a2540;
+    --ink-2: #425466;
+    --muted: #697386;
+    --line: #e3e8ee;
+    --line-2: #f0f3f7;
 
     --success: #16a34a;
     --warn: #d97706;
     --bad: #dc2626;
     --link: #2563eb;
-    --brand: #4600f2;
-    --brand-soft: #f1ecff;
+    /* --brand here is the app's single accent; aligned to the Playbook indigo
+       accent. True Spyne violet (#4600f2) is reserved for logo/brand lockups. */
+    --brand: #635bff;
+    --brand-soft: #eef0ff;
+    --brand-violet: #4600f2;
+
+    --card-radius: 8px;
+    --card-shadow: 0 1px 3px rgba(50, 50, 93, 0.04), 0 1px 0 rgba(0, 0, 0, 0.02);
   }
 
   * { box-sizing: border-box; }
@@ -56,7 +63,8 @@
   /* Card */
   .card {
     background: var(--surface); border: 1px solid var(--line);
-    border-radius: 14px; padding: 22px 24px;
+    border-radius: var(--card-radius); padding: 22px 24px;
+    box-shadow: var(--card-shadow);
   }
 
   /* Config bar */
@@ -140,7 +148,7 @@
   /* Studio Features: base plan + add-on cards */
   .base-plan {
     display: flex; align-items: center; justify-content: space-between; gap: 16px;
-    padding: 16px 18px; border: 1px solid var(--line); background: #f0fdf4; border-radius: 12px; margin-bottom: 12px;
+    padding: 16px 18px; border: 1px solid var(--line); background: #f0fdf4; border-radius: var(--card-radius); margin-bottom: 12px;
   }
   .bp-left { display: flex; align-items: center; gap: 12px; }
   .bp-left > svg { width: 20px; height: 20px; stroke: var(--success); fill: none; flex: 0 0 auto; }
@@ -150,7 +158,7 @@
   .bp-price { font-family: var(--font-mono); font-size: 18px; font-weight: 700; color: var(--ink); }
 
   .addon-list { display: flex; flex-direction: column; gap: 12px; }
-  .addon-card { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; transition: background 0.12s; }
+  .addon-card { border: 1px solid var(--line); border-radius: var(--card-radius); overflow: hidden; transition: background 0.12s; }
   .addon-card.on { background: #faf9ff; }
   .addon-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 18px; cursor: pointer; }
   .addon-htitle { display: flex; align-items: center; gap: 9px; }
@@ -238,7 +246,7 @@
   .disc-list { display: flex; flex-direction: column; gap: 12px; }
   .disc-item, .disc-group {
     display: flex; justify-content: space-between; align-items: center; gap: 16px;
-    padding: 14px 16px; border: 1px solid var(--line); border-radius: 12px;
+    padding: 14px 16px; border: 1px solid var(--line); border-radius: var(--card-radius);
   }
   .disc-group { flex-wrap: wrap; }
   .disc-name { font-size: 13.5px; font-weight: 600; display: block; }
@@ -292,7 +300,7 @@
   .int-dropdown.open .int-trigger .chev { transform: rotate(180deg); }
   .int-menu {
     position: absolute; top: calc(100% + 6px); left: 0; right: 0; z-index: 30;
-    background: var(--surface); border: 1px solid var(--line); border-radius: 12px;
+    background: var(--surface); border: 1px solid var(--line); border-radius: var(--card-radius);
     box-shadow: 0 18px 44px -14px rgba(15,23,42,0.30); padding: 6px; max-height: 340px; overflow-y: auto; display: none;
   }
   .int-dropdown.open .int-menu { display: block; }
