@@ -7,21 +7,17 @@
  */
 window.PRICING_KEY = "spyne_pricing_config_v1";
 
-/* Local-dev fallback passcode only. In production the REAL passcode lives in the
- * Vercel env var ADMIN_PASSCODE and is checked server-side (never exposed here). */
-window.ADMIN_PASSCODE = "spyne2026";
-
 window.PRICING_DEFAULTS = {
   vini: {
     // Per agent, per rooftop, per month. Add or remove tiers freely.
     tiers: [
-      { vins: 50,  salesIn: 900,  salesOut: 1150, servIn: 1100, servOut: 1399 },
-      { vins: 100, salesIn: 1200, salesOut: 1800, servIn: 1440, servOut: 2160 },
-      { vins: 200, salesIn: 1600, salesOut: 2400, servIn: 1920, servOut: 2880 },
-      { vins: 300, salesIn: 2100, salesOut: 3150, servIn: 2520, servOut: 3780 },
+      { vins: 50,  salesIn: 900,  salesOut: 1200, servIn: 1000, servOut: 1400 },
+      { vins: 100, salesIn: 1200, salesOut: 1500, servIn: 1300, servOut: 1700 },
+      { vins: 200, salesIn: 1600, salesOut: 2000, servIn: 1800, servOut: 2200 },
+      { vins: 300, salesIn: 2100, salesOut: 2600, servIn: 2300, servOut: 2860 },
     ],
-    bundle: 0.10,                                            // all-4-agents discount (decimal)
-    volume: { t1: 3, t2: 7, r0: 0.10, r1: 0.20, r2: 0.30 }, // rooftop volume tiers: r0=under t1, r1=t1..t2-1, r2=t2+
+    bundle: 0.10,                                          // all-4-agents discount (decimal)
+    volume: { t1: 3, t2: 7, r0: 0, r1: 0.10, r2: 0.20 },  // rooftop volume tiers: r0=under t1, r1=t1..t2-1, r2=t2+
     integrations: [
       { name: "Vinsolutions",             type: "sales",    cost: 95 },
       { name: "CDK (Elead)",              type: "sales",    cost: 500 },
@@ -84,44 +80,28 @@ window.loadPricingConfig = async function () {
   return mergePricingConfig(d, null);
 };
 
-/* Save to the shared backend. Requires the admin passcode (validated server-side).
- * Returns { ok, shared, error }. With no backend, saves locally so dev still works. */
+/* Save to the shared backend. Returns { ok, shared, error }.
+ * With no backend reachable, saves locally so dev still works. */
 function saveLocal(cfg) {
   try { localStorage.setItem(window.PRICING_KEY, JSON.stringify(cfg)); return { ok: true, shared: false }; }
   catch (e) { return { ok: false, error: "No storage available" }; }
 }
 
-window.savePricingConfig = async function (cfg, passcode) {
+window.savePricingConfig = async function (cfg) {
   try {
     const r = await fetch("/api/config", {
       method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ passcode, config: cfg }),
+      body: JSON.stringify({ config: cfg }),
     });
     if (r.ok) { try { localStorage.setItem(window.PRICING_KEY, JSON.stringify(cfg)); } catch (e) {} return { ok: true, shared: true }; }
-    if (r.status === 401) return { ok: false, error: "Invalid passcode" };
     return saveLocal(cfg); // backend absent/erroring -> local fallback (dev)
   } catch (e) {
     return saveLocal(cfg);
   }
 };
 
-/* Check the passcode. 200 = ok, 401 = wrong; anything else (no backend) -> local compare. */
-window.verifyPasscode = async function (passcode) {
-  try {
-    const r = await fetch("/api/config", {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ passcode, verify: true }),
-    });
-    if (r.ok) return true;
-    if (r.status === 401) return false;
-    return passcode === window.ADMIN_PASSCODE; // no real backend
-  } catch (e) {
-    return passcode === window.ADMIN_PASSCODE;
-  }
-};
-
 /* Reset = write the built-in defaults to the shared store. */
-window.resetPricingConfig = async function (passcode) {
-  return window.savePricingConfig(JSON.parse(JSON.stringify(window.PRICING_DEFAULTS)), passcode);
+window.resetPricingConfig = async function () {
+  return window.savePricingConfig(JSON.parse(JSON.stringify(window.PRICING_DEFAULTS)));
 };
 window.hasPricingOverride = function () { try { return !!localStorage.getItem(window.PRICING_KEY); } catch (e) { return false; } };
