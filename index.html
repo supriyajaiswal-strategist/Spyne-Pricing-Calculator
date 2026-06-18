@@ -288,6 +288,10 @@
   .int-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 16px; }
   .int-summary { font-family: var(--font-mono); font-size: 12px; color: var(--ink-2); white-space: nowrap; }
   .int-summary b { color: var(--brand); font-weight: 600; }
+  .int-groups { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 20px; }
+  @media (max-width: 560px) { .int-groups { grid-template-columns: 1fr; } }
+  .int-group { min-width: 0; }
+  .int-glabel { display: block; font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
   .int-left { display: flex; align-items: center; gap: 9px; min-width: 0; }
   .int-box { width: 16px; height: 16px; border-radius: 5px; border: 1.5px solid var(--muted); flex: 0 0 auto; position: relative; transition: 0.12s; }
   .int-meta { display: flex; flex-direction: column; min-width: 0; }
@@ -495,14 +499,7 @@
           </div>
           <span class="int-summary" id="intSummary">None selected</span>
         </div>
-        <div class="int-dropdown" id="intDropdown">
-          <button class="int-trigger" id="intTrigger" type="button">
-            <span id="intTriggerLabel">Select integrations</span>
-            <svg class="chev" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
-          </button>
-          <div class="int-menu" id="intMenu"></div>
-        </div>
-        <div class="int-selected" id="intSelected"></div>
+        <div class="int-groups" id="intGroups"></div>
       </section>
     </div>
 
@@ -764,42 +761,82 @@
     });
   }
 
+  const INT_CATEGORIES = [
+    { key: "sales",   label: "Sales integrations",   match: t => t === "sales" },
+    { key: "service", label: "Service integrations", match: t => t === "service" },
+    { key: "other",   label: "Other integrations",   match: t => t !== "sales" && t !== "service" },
+  ];
+  const intType = it => (it.type || "").toLowerCase();
+
   function renderIntegrations() {
-    const menu = document.getElementById("intMenu");
-    menu.innerHTML = "";
-    INTEGRATIONS.forEach((it, i) => {
-      const el = document.createElement("div");
-      el.className = "int-opt" + (state.integrations[i] ? " on" : "");
-      el.dataset.int = i;
-      const cost = it.cost == null
-        ? `<span class="int-cost tbd">TBD</span>`
-        : `<span class="int-cost">${fmt(it.cost)}</span>`;
-      el.innerHTML = `<span class="int-left"><span class="int-box"></span><span class="int-meta"><span class="int-name">${it.name}</span><span class="int-type">${it.type}</span></span></span>${cost}`;
-      el.addEventListener("click", e => { e.stopPropagation(); state.integrations[i] = !state.integrations[i]; recalc(); });
-      menu.appendChild(el);
+    const root = document.getElementById("intGroups");
+    root.innerHTML = "";
+    INT_CATEGORIES.forEach(cat => {
+      const items = INTEGRATIONS.map((it, i) => ({ it, i })).filter(x => cat.match(intType(x.it)));
+      if (!items.length) return;
+
+      const group = document.createElement("div");
+      group.className = "int-group";
+
+      const dd = document.createElement("div");
+      dd.className = "int-dropdown"; dd.dataset.cat = cat.key;
+
+      const trigger = document.createElement("button");
+      trigger.className = "int-trigger"; trigger.type = "button";
+      trigger.innerHTML = `<span class="int-tlabel">Select</span><svg class="chev" viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>`;
+      trigger.addEventListener("click", e => {
+        e.stopPropagation();
+        const wasOpen = dd.classList.contains("open");
+        document.querySelectorAll(".int-dropdown.open").forEach(o => o.classList.remove("open"));
+        if (!wasOpen) dd.classList.add("open");
+      });
+
+      const menu = document.createElement("div");
+      menu.className = "int-menu";
+      items.forEach(({ it, i }) => {
+        const el = document.createElement("div");
+        el.className = "int-opt" + (state.integrations[i] ? " on" : "");
+        el.dataset.int = i;
+        const cost = it.cost == null ? `<span class="int-cost tbd">TBD</span>` : `<span class="int-cost">${fmt(it.cost)}</span>`;
+        el.innerHTML = `<span class="int-left"><span class="int-box"></span><span class="int-meta"><span class="int-name">${it.name}</span><span class="int-type">${it.type}</span></span></span>${cost}`;
+        el.addEventListener("click", e => { e.stopPropagation(); state.integrations[i] = !state.integrations[i]; recalc(); });
+        menu.appendChild(el);
+      });
+
+      dd.appendChild(trigger); dd.appendChild(menu);
+      const sel = document.createElement("div");
+      sel.className = "int-selected"; sel.dataset.cat = cat.key;
+
+      const glabel = document.createElement("span");
+      glabel.className = "int-glabel"; glabel.textContent = cat.label;
+
+      group.appendChild(glabel); group.appendChild(dd); group.appendChild(sel);
+      root.appendChild(group);
     });
   }
+
   function syncIntegrations() {
-    // menu checkmarks
     document.querySelectorAll(".int-opt").forEach(el => {
       el.classList.toggle("on", !!state.integrations[Number(el.dataset.int)]);
     });
-    // selected chips
-    const wrap = document.getElementById("intSelected");
-    wrap.innerHTML = "";
-    let count = 0;
-    INTEGRATIONS.forEach((it, i) => {
-      if (!state.integrations[i]) return;
-      count++;
-      const tag = document.createElement("span");
-      tag.className = "int-tag";
-      const cost = it.cost == null ? `<span class="tcost tbd">TBD</span>` : `<span class="tcost">${fmt(it.cost)}</span>`;
-      tag.innerHTML = `<span class="tname">${it.name}</span>${cost}<span class="x" title="Remove">✕</span>`;
-      tag.querySelector(".x").addEventListener("click", e => { e.stopPropagation(); state.integrations[i] = false; recalc(); });
-      wrap.appendChild(tag);
+    INT_CATEGORIES.forEach(cat => {
+      const sel = document.querySelector(`.int-selected[data-cat="${cat.key}"]`);
+      const dd  = document.querySelector(`.int-dropdown[data-cat="${cat.key}"]`);
+      if (!sel || !dd) return;
+      sel.innerHTML = "";
+      let count = 0;
+      INTEGRATIONS.forEach((it, i) => {
+        if (!cat.match(intType(it)) || !state.integrations[i]) return;
+        count++;
+        const tag = document.createElement("span");
+        tag.className = "int-tag";
+        const cost = it.cost == null ? `<span class="tcost tbd">TBD</span>` : `<span class="tcost">${fmt(it.cost)}</span>`;
+        tag.innerHTML = `<span class="tname">${it.name}</span>${cost}<span class="x" title="Remove">✕</span>`;
+        tag.querySelector(".x").addEventListener("click", e => { e.stopPropagation(); state.integrations[i] = false; recalc(); });
+        sel.appendChild(tag);
+      });
+      dd.querySelector(".int-tlabel").textContent = count === 0 ? "Select" : `${count} selected`;
     });
-    document.getElementById("intTriggerLabel").textContent =
-      count === 0 ? "Select integrations" : `${count} integration${count > 1 ? "s" : ""} selected`;
   }
 
   function renderTierTable() {
@@ -1008,14 +1045,11 @@
     if (!isNaN(v)) setGroups(v);
   });
 
-  // ---- Integrations dropdown open/close ----
-  const intDD = document.getElementById("intDropdown");
-  document.getElementById("intTrigger").addEventListener("click", e => {
-    e.stopPropagation();
-    intDD.classList.toggle("open");
-  });
+  // ---- Integrations dropdowns: close on outside click ----
   document.addEventListener("click", e => {
-    if (!intDD.contains(e.target)) intDD.classList.remove("open");
+    if (!e.target.closest(".int-dropdown")) {
+      document.querySelectorAll(".int-dropdown.open").forEach(o => o.classList.remove("open"));
+    }
   });
 
   // ========================= STUDIO =========================
