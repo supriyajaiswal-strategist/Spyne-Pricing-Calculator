@@ -384,6 +384,20 @@
   }
   .cta:hover { opacity: 0.92; }
 
+  /* Insights */
+  .insights { margin-top: 10px; }
+  .ins-head { display: flex; align-items: center; gap: 7px; margin-bottom: 8px; }
+  .ins-head svg { width: 14px; height: 14px; stroke: var(--brand); fill: none; }
+  .ins-head .t { font-size: 12.5px; font-weight: 700; }
+  .ins-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 7px; }
+  .ins-item { display: flex; gap: 8px; font-size: 11.5px; color: var(--ink-2); line-height: 1.4; }
+  .ins-item .ico { flex: 0 0 auto; margin-top: 1px; }
+  .ins-item .ico svg { width: 13px; height: 13px; fill: none; }
+  .ico-up svg { stroke: var(--success); }
+  .ico-info svg { stroke: var(--link); }
+  .ico-warn svg { stroke: var(--warn); }
+  .ins-item b { font-weight: 600; color: var(--ink); }
+
   .note { font-size: 11px; color: var(--muted); margin-top: 12px; line-height: 1.45; }
   .note b { color: var(--ink-2); font-weight: 600; }
 </style>
@@ -451,6 +465,14 @@
           </thead>
           <tbody id="tierBody"></tbody>
         </table>
+      </section>
+
+      <section class="card insights">
+        <div class="ins-head">
+          <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a7 7 0 0 0-4 12.7V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.3A7 7 0 0 0 12 2Z"/><path d="M9 21h6"/></svg>
+          <span class="t">Insights</span>
+        </div>
+        <ul class="ins-list" id="insights"></ul>
       </section>
     </div>
 
@@ -584,6 +606,14 @@
             </thead>
             <tbody id="sTierBody"></tbody>
           </table>
+        </section>
+
+        <section class="card insights">
+          <div class="ins-head">
+            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a7 7 0 0 0-4 12.7V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.3A7 7 0 0 0 12 2Z"/><path d="M9 21h6"/></svg>
+            <span class="t">Insights</span>
+          </div>
+          <ul class="ins-list" id="sInsights"></ul>
         </section>
       </div>
 
@@ -950,6 +980,40 @@
     const gs = document.getElementById("grpSub");
     gs.textContent = gDisc > 0 ? `${Math.round(gDisc*100)}% volume discount` : "No volume discount";
     gs.style.color = gDisc > 0 ? "var(--success)" : "var(--muted)";
+
+    renderInsights({ t, allFour, perRooftop, activeCount });
+  }
+
+  // ---- Insights ----
+  const ICONS = {
+    up:   '<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>',
+    info: '<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>',
+    warn: '<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
+  };
+  const insItem = (k, html) => `<li class="ins-item"><span class="ico ico-${k}">${ICONS[k]}</span><span>${html}</span></li>`;
+
+  function renderInsights({ t, allFour, perRooftop, activeCount }) {
+    const out = [];
+    const bp = Math.round(BUNDLE_DISCOUNT * 100), r1p = Math.round(VOL.r1 * 100), r2p = Math.round(VOL.r2 * 100);
+    if (activeCount === 0) {
+      out.push(insItem("warn", "No agents active. Turn one on to see pricing."));
+    } else if (allFour) {
+      out.push(insItem("up", `<b>Full VINI stack active.</b> The ${bp}% all-agents bundle discount is applied.`));
+    } else {
+      const full = AGENTS.reduce((s, a) => s + t[a.key], 0);
+      out.push(insItem("up", `Run <b>all four agents</b> to unlock the ${bp}% bundle, worth ~<b>${fmt(full*BUNDLE_DISCOUNT)}/mo</b> per rooftop.`));
+    }
+    if (state.groups < VOL.t1) {
+      out.push(insItem("info", `Commit <b>${VOL.t1} rooftops</b> to reach the ${r1p}% volume tier.`));
+    } else if (state.groups < VOL.t2) {
+      out.push(insItem("info", `At the ${r1p}% volume tier. Reach <b>${VOL.t2} rooftops</b> for ${r2p}%.`));
+    } else {
+      out.push(insItem("up", `<b>Top volume tier</b> at ${r2p}% off for ${state.groups} rooftops.`));
+    }
+    if (perRooftop > 0) {
+      out.push(insItem("info", `Effective rate <b>${fmt2(perRooftop / t.vins)}/VIN</b> at the ${t.vins}-VIN tier. Higher tiers lower the blended cost.`));
+    }
+    document.getElementById("insights").innerHTML = out.join("");
   }
 
   // ---- Rooftop stepper ----
@@ -1111,6 +1175,18 @@
     document.getElementById("sCtxGrp").textContent = studio.groups;
     document.getElementById("sGrpFoot").textContent = studio.groups;
     document.getElementById("sCartCount").textContent = 1 + addonCount;
+
+    // insights
+    const out = [];
+    if (studio.plan === "lite") {
+      out.push(insItem("info", `Studio Pro adds <b>${fmt(t.pro - t.lite)}/mo</b> per rooftop over Lite at this tier.`));
+    } else {
+      out.push(insItem("up", `<b>Studio Pro active</b> at the ${t.vins}-VIN tier.`));
+    }
+    const offAddon = STUDIO_ADDONS.find(a => !studio.addons[a.key]);
+    if (offAddon) out.push(insItem("info", `Add <b>${offAddon.label}</b> (${fmt(t[offAddon.key])}/mo) to expand coverage.`));
+    out.push(insItem("info", `Blended rate <b>${fmt2(perRooftop / t.vins)}/VIN</b> at the ${t.vins}-VIN tier. Higher tiers lower the per-VIN cost.`));
+    document.getElementById("sInsights").innerHTML = out.join("");
   }
 
   // Studio rooftop stepper
