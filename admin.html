@@ -13,154 +13,190 @@
   :root {
     --font-sans: "Inter Tight", system-ui, -apple-system, sans-serif;
     --font-mono: "JetBrains Mono", ui-monospace, monospace;
-    --bg: #f8fafc; --surface: #ffffff; --ink: #0f172a; --ink-2: #334155;
-    --muted: #94a3b8; --line: #e2e8f0; --line-2: #f1f5f9;
-    --success: #16a34a; --bad: #dc2626; --link: #2563eb; --brand: #4600f2; --brand-soft: #f1ecff;
+    --bg: #f6f9fc; --surface: #ffffff; --ink: #0a2540; --ink-2: #425466;
+    --muted: #697386; --line: #e3e8ee; --line-2: #f0f3f7;
+    --success: #16a34a; --bad: #dc2626; --brand: #635bff; --brand-soft: #eef0ff;
+    --radius: 8px; --shadow: 0 1px 3px rgba(50,50,93,0.04), 0 1px 0 rgba(0,0,0,0.02);
   }
   * { box-sizing: border-box; }
   html, body { margin: 0; padding: 0; }
   body { font-family: var(--font-sans); background: var(--bg); color: var(--ink); -webkit-font-smoothing: antialiased; line-height: 1.45; }
   .num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
-  .wrap { max-width: 1100px; margin: 0 auto; padding: 32px 28px 120px; }
 
-  /* Top bar */
-  .topbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 8px; flex-wrap: wrap; }
-  .eyebrow { font-size: 12px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--brand); display: flex; align-items: center; gap: 8px; }
+  /* ---- Gate ---- */
+  .gate { position: fixed; inset: 0; background: var(--bg); z-index: 100; display: flex; align-items: center; justify-content: center; padding: 24px; }
+  .gate-card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow); padding: 32px; max-width: 380px; width: 100%; }
+  .gate .eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--brand); display: flex; align-items: center; gap: 8px; }
+  .gate .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--brand); }
+  .gate h1 { font-size: 21px; font-weight: 700; letter-spacing: -0.02em; margin: 12px 0 6px; }
+  .gate p { font-size: 13px; color: var(--muted); margin: 0 0 18px; }
+  .gate input { width: 100%; font-family: var(--font-sans); font-size: 14px; padding: 11px 13px; border: 1px solid var(--line); border-radius: var(--radius); outline: none; }
+  .gate input:focus { border-color: var(--brand); }
+  .gate button { width: 100%; margin-top: 12px; padding: 11px; border: none; border-radius: var(--radius); background: var(--brand); color: #fff; font-family: var(--font-sans); font-size: 14px; font-weight: 600; cursor: pointer; }
+  .gate button:hover { opacity: 0.92; }
+  .gate-err { color: var(--bad); font-size: 12.5px; min-height: 16px; margin: 10px 0 0 !important; }
+
+  /* ---- App ---- */
+  .wrap { max-width: 900px; margin: 0 auto; padding: 26px 28px 100px; }
+  .topbar { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 4px; flex-wrap: wrap; }
+  .eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--brand); display: flex; align-items: center; gap: 8px; }
   .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--brand); }
-  h1.title { font-size: 26px; font-weight: 700; letter-spacing: -0.02em; margin: 6px 0 4px; }
-  .sub { font-size: 14px; color: var(--ink-2); margin: 0 0 22px; max-width: 680px; }
-  .actions { display: flex; gap: 8px; flex-wrap: wrap; }
-  .btn {
-    display: inline-flex; align-items: center; gap: 7px; font-family: var(--font-sans); font-size: 13px; font-weight: 600;
-    border: 1px solid var(--line); background: var(--surface); color: var(--ink-2); padding: 9px 14px; border-radius: 10px; cursor: pointer; text-decoration: none;
-  }
-  .btn:hover { border-color: #cbd5e1; }
-  .btn.primary { background: var(--brand); color: #fff; border-color: var(--brand); }
-  .btn.primary:hover { opacity: 0.92; }
-  .btn.danger { color: var(--bad); }
-  .btn svg { width: 15px; height: 15px; stroke: currentColor; fill: none; }
+  h1.title { font-size: 23px; font-weight: 700; letter-spacing: -0.02em; margin: 7px 0 18px; }
+  .ghost { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-sans); font-size: 12.5px; font-weight: 600; border: 1px solid var(--line); background: var(--surface); color: var(--ink-2); padding: 7px 11px; border-radius: var(--radius); cursor: pointer; text-decoration: none; }
+  .ghost:hover { border-color: #cbd5e1; }
+  .ghost.danger { color: var(--bad); }
+  .ghost svg { width: 14px; height: 14px; stroke: currentColor; fill: none; }
+  .toolbar { display: flex; gap: 7px; flex-wrap: wrap; }
 
-  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 22px 24px; margin-bottom: 20px; }
-  .card h2 { font-size: 16px; font-weight: 700; margin: 0 0 2px; }
-  .card .desc { font-size: 12.5px; color: var(--muted); margin: 0 0 18px; }
+  /* Tabs */
+  .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin-bottom: 22px; }
+  .tab { padding: 9px 16px; border: none; background: none; cursor: pointer; font-family: var(--font-sans); font-size: 14px; font-weight: 600; color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -1px; }
+  .tab:hover { color: var(--ink-2); }
+  .tab.active { color: var(--brand); border-bottom-color: var(--brand); }
+  .panel { display: none; }
+  .panel.active { display: block; }
 
-  table.edit { width: 100%; border-collapse: collapse; }
-  table.edit th { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; color: var(--muted); text-align: left; padding: 6px 8px; border-bottom: 1px solid var(--line); }
-  table.edit td { padding: 5px 8px; border-bottom: 1px solid var(--line-2); }
-  table.edit td.rm { width: 36px; text-align: center; }
+  .block { margin-bottom: 28px; }
+  .block > h2 { font-size: 14px; font-weight: 700; margin: 0 0 3px; }
+  .block > .hint { font-size: 12px; color: var(--muted); margin: 0 0 14px; }
 
-  input.in, select.in {
+  /* Editable rows */
+  .rows { display: flex; flex-direction: column; gap: 8px; }
+  .rowhead, .row { display: grid; align-items: center; gap: 10px; }
+  .rowhead { font-size: 10.5px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; color: var(--muted); padding: 0 2px 2px; }
+  .row .rm { justify-self: center; }
+  input.in {
     width: 100%; font-family: var(--font-mono); font-size: 13px; color: var(--ink); background: var(--surface);
-    border: 1px solid var(--line); border-radius: 8px; padding: 8px 10px; outline: none;
+    border: 1px solid var(--line); border-radius: var(--radius); padding: 9px 11px; outline: none;
   }
-  input.in:focus, select.in:focus { border-color: var(--brand); }
-  input.in.text, select.in { font-family: var(--font-sans); }
-  .rmbtn { border: none; background: none; cursor: pointer; color: var(--muted); font-size: 16px; line-height: 1; padding: 4px 6px; border-radius: 6px; }
+  input.in.text { font-family: var(--font-sans); }
+  input.in:focus { border-color: var(--brand); }
+  .rmbtn { border: none; background: none; cursor: pointer; color: var(--muted); font-size: 15px; line-height: 1; padding: 6px; border-radius: 6px; }
   .rmbtn:hover { color: var(--bad); background: var(--line-2); }
-  .addbtn { margin-top: 12px; font-size: 12.5px; font-weight: 600; color: var(--brand); background: var(--brand-soft); border: none; border-radius: 8px; padding: 8px 12px; cursor: pointer; }
+  .addbtn { margin-top: 12px; font-size: 12.5px; font-weight: 600; color: var(--brand); background: var(--brand-soft); border: none; border-radius: var(--radius); padding: 9px 14px; cursor: pointer; }
   .addbtn:hover { opacity: 0.9; }
 
-  .field-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 14px; }
-  .field label { display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; color: var(--muted); margin-bottom: 6px; }
+  /* Discount fields */
+  .fields { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; }
+  .field label { display: block; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; color: var(--muted); margin-bottom: 7px; }
   .field .hint { font-size: 11px; color: var(--muted); margin-top: 5px; }
   .suffix { position: relative; }
-  .suffix .s { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 12px; color: var(--muted); font-family: var(--font-mono); }
+  .suffix .s { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); font-size: 12px; color: var(--muted); font-family: var(--font-mono); pointer-events: none; }
+
+  .subhead { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--muted); margin: 18px 0 8px; }
+  .subhead:first-of-type { margin-top: 0; }
 
   /* Save bar */
-  .savebar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 50; background: var(--surface); border-top: 1px solid var(--line); box-shadow: 0 -8px 24px -16px rgba(15,23,42,0.30); }
-  .savebar-inner { max-width: 1100px; margin: 0 auto; padding: 12px 28px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-  .savebar .status { font-size: 13px; color: var(--ink-2); }
+  .savebar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 50; background: var(--surface); border-top: 1px solid var(--line); box-shadow: 0 -8px 24px -16px rgba(50,50,93,0.20); }
+  .savebar-inner { max-width: 900px; margin: 0 auto; padding: 12px 28px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .savebar .status { font-size: 13px; color: var(--muted); }
   .savebar .status b { color: var(--success); }
   .savebar .status.warn b { color: var(--bad); }
-  .modal-bg { position: fixed; inset: 0; background: rgba(15,23,42,0.4); z-index: 60; display: none; align-items: center; justify-content: center; padding: 24px; }
+  .savebar .right { display: flex; gap: 8px; }
+  .primary { border: none; border-radius: var(--radius); background: var(--brand); color: #fff; font-family: var(--font-sans); font-size: 13.5px; font-weight: 600; padding: 9px 18px; cursor: pointer; }
+  .primary:hover { opacity: 0.92; }
+
+  /* Modal */
+  .modal-bg { position: fixed; inset: 0; background: rgba(10,37,64,0.4); z-index: 60; display: none; align-items: center; justify-content: center; padding: 24px; }
   .modal-bg.open { display: flex; }
   .modal { background: var(--surface); border-radius: 14px; padding: 22px; max-width: 560px; width: 100%; }
   .modal h3 { margin: 0 0 10px; font-size: 16px; }
-  .modal textarea { width: 100%; height: 220px; font-family: var(--font-mono); font-size: 12px; border: 1px solid var(--line); border-radius: 10px; padding: 12px; resize: vertical; }
+  .modal textarea { width: 100%; height: 220px; font-family: var(--font-mono); font-size: 12px; border: 1px solid var(--line); border-radius: 10px; padding: 12px; resize: vertical; outline: none; }
   .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; }
 </style>
 </head>
 <body>
-<div class="wrap">
+
+<!-- ===== Passcode gate ===== -->
+<div class="gate" id="gate">
+  <div class="gate-card">
+    <div class="eyebrow"><span class="dot"></span> Spyne · Pricing Admin</div>
+    <h1>Enter passcode</h1>
+    <p>This page edits the calculator's pricing. Ask your admin for the passcode.</p>
+    <input id="gatePass" type="password" placeholder="Passcode" autocomplete="off" />
+    <button id="gateBtn">Unlock</button>
+    <p class="gate-err" id="gateErr"></p>
+  </div>
+</div>
+
+<!-- ===== App ===== -->
+<div class="wrap" id="app" style="display:none">
   <div class="topbar">
-    <div>
-      <div class="eyebrow"><span class="dot"></span> Spyne · Pricing Admin</div>
-    </div>
-    <div class="actions">
-      <a class="btn" href="index.html"><svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> Back to calculator</a>
-      <button class="btn" id="btnExport"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Export</button>
-      <button class="btn" id="btnImport"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Import</button>
-      <button class="btn danger" id="btnReset"><svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg> Reset</button>
+    <div class="eyebrow"><span class="dot"></span> Spyne · Pricing Admin</div>
+    <div class="toolbar">
+      <a class="ghost" href="index.html"><svg viewBox="0 0 24 24"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg> Calculator</a>
+      <button class="ghost" id="btnExport"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Export</button>
+      <button class="ghost" id="btnImport"><svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg> Import</button>
+      <button class="ghost danger" id="btnReset"><svg viewBox="0 0 24 24"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg> Reset</button>
     </div>
   </div>
-  <h1 class="title">Edit Pricing</h1>
-  <p class="sub">Change prices, slabs, discounts, integrations and add-ons here. Changes save to this browser and apply instantly on the calculator. To make a change the shared default for everyone, use <b>Export</b> and send the file to be committed.</p>
+  <h1 class="title">Edit pricing</h1>
 
-  <!-- VINI tiers -->
-  <section class="card">
-    <h2>VINI · Tier prices (slabs)</h2>
-    <p class="desc">Per agent, per rooftop, per month. Add or remove VIN slabs as needed.</p>
-    <table class="edit">
-      <thead><tr><th>Max VINs</th><th>Sales · Inbound</th><th>Sales · Outbound</th><th>Service · Inbound</th><th>Service · Outbound</th><th class="rm"></th></tr></thead>
-      <tbody id="viniTierBody"></tbody>
-    </table>
-    <button class="addbtn" id="addViniTier">+ Add slab</button>
-  </section>
+  <div class="tabs">
+    <button class="tab active" data-panel="vini" type="button">VINI</button>
+    <button class="tab" data-panel="integrations" type="button">Integrations</button>
+    <button class="tab" data-panel="studio" type="button">Studio</button>
+  </div>
 
-  <!-- VINI discounts -->
-  <section class="card">
-    <h2>VINI · Discounts</h2>
-    <p class="desc">All-4-agents bundle and rooftop volume tiers.</p>
-    <div class="field-grid">
-      <div class="field"><label>All-4 bundle</label><div class="suffix"><input class="in" id="dBundle" type="number" step="1"><span class="s">%</span></div></div>
-      <div class="field"><label>Base volume (under tier 1)</label><div class="suffix"><input class="in" id="dR0" type="number" step="1"><span class="s">%</span></div><div class="hint">Applies below tier 1</div></div>
-      <div class="field"><label>Volume tier 1 from</label><div class="suffix"><input class="in" id="dT1" type="number" step="1"><span class="s">rooftops</span></div><div class="hint">First volume threshold</div></div>
-      <div class="field"><label>Tier 1 discount</label><div class="suffix"><input class="in" id="dR1" type="number" step="1"><span class="s">%</span></div></div>
-      <div class="field"><label>Volume tier 2 from</label><div class="suffix"><input class="in" id="dT2" type="number" step="1"><span class="s">rooftops</span></div><div class="hint">Second volume threshold</div></div>
-      <div class="field"><label>Tier 2 discount</label><div class="suffix"><input class="in" id="dR2" type="number" step="1"><span class="s">%</span></div></div>
+  <!-- VINI -->
+  <section class="panel active" data-panel="vini">
+    <div class="block">
+      <h2>Tier prices</h2>
+      <p class="hint">Per agent, per rooftop, per month.</p>
+      <div class="rowhead" id="viniTierHead"></div>
+      <div class="rows" id="viniTierBody"></div>
+      <button class="addbtn" id="addViniTier">+ Add tier</button>
+    </div>
+    <div class="block">
+      <h2>Discounts</h2>
+      <p class="hint">Bundle applies when all four agents are on. Volume applies by rooftop count.</p>
+      <div class="fields">
+        <div class="field"><label>All-4 bundle</label><div class="suffix"><input class="in" id="dBundle" type="number"><span class="s">%</span></div></div>
+        <div class="field"><label>Under tier 1</label><div class="suffix"><input class="in" id="dR0" type="number"><span class="s">%</span></div></div>
+        <div class="field"><label>Tier 1 from</label><div class="suffix"><input class="in" id="dT1" type="number"><span class="s">roofs</span></div></div>
+        <div class="field"><label>Tier 1 discount</label><div class="suffix"><input class="in" id="dR1" type="number"><span class="s">%</span></div></div>
+        <div class="field"><label>Tier 2 from</label><div class="suffix"><input class="in" id="dT2" type="number"><span class="s">roofs</span></div></div>
+        <div class="field"><label>Tier 2 discount</label><div class="suffix"><input class="in" id="dR2" type="number"><span class="s">%</span></div></div>
+      </div>
     </div>
   </section>
 
-  <!-- VINI integrations -->
-  <section class="card">
-    <h2>VINI · Integrations</h2>
-    <p class="desc">Pass-through cost per rooftop. Leave cost blank for TBD. Type groups them (sales / service / etc).</p>
-    <table class="edit">
-      <thead><tr><th>Provider</th><th>Type</th><th>Cost / rooftop</th><th class="rm"></th></tr></thead>
-      <tbody id="intBody"></tbody>
-    </table>
-    <button class="addbtn" id="addInt">+ Add integration</button>
+  <!-- Integrations -->
+  <section class="panel" data-panel="integrations">
+    <div class="block">
+      <h2>Integrations</h2>
+      <p class="hint">Pass-through cost per rooftop. Leave cost blank for TBD.</p>
+      <div class="rowhead" id="intHead"></div>
+      <div class="rows" id="intBody"></div>
+      <button class="addbtn" id="addInt">+ Add integration</button>
+    </div>
   </section>
 
-  <!-- Studio tiers -->
-  <section class="card">
-    <h2>Studio · Tier prices (slabs)</h2>
-    <p class="desc">Per rooftop, per month. Lite / Pro are base plans; SmartMatch / SmartCampaigns are add-ons.</p>
-    <table class="edit">
-      <thead><tr><th>Max VINs</th><th>Studio Lite</th><th>Studio Pro</th><th>SmartMatch</th><th>SmartCampaigns</th><th class="rm"></th></tr></thead>
-      <tbody id="studioTierBody"></tbody>
-    </table>
-    <button class="addbtn" id="addStudioTier">+ Add slab</button>
-  </section>
-
-  <!-- Studio add-ons -->
-  <section class="card">
-    <h2>Studio · Add-on labels</h2>
-    <p class="desc">Names and sub-labels for the Studio add-ons. Their prices live in the Studio slab table above.</p>
-    <table class="edit">
-      <thead><tr><th>Key</th><th>Label</th><th>Sub-label (optional)</th></tr></thead>
-      <tbody id="addonBody"></tbody>
-    </table>
+  <!-- Studio -->
+  <section class="panel" data-panel="studio">
+    <div class="block">
+      <h2>Tier prices</h2>
+      <p class="hint">Per rooftop, per month. Lite / Pro are plans; SmartMatch / SmartCampaigns are add-ons.</p>
+      <div class="rowhead" id="studioTierHead"></div>
+      <div class="rows" id="studioTierBody"></div>
+      <button class="addbtn" id="addStudioTier">+ Add tier</button>
+    </div>
+    <div class="block">
+      <h2>Add-on labels</h2>
+      <p class="hint">Names shown for the Studio add-ons. Prices live in the tiers above.</p>
+      <div class="rowhead" id="addonHead"></div>
+      <div class="rows" id="addonBody"></div>
+    </div>
   </section>
 </div>
 
 <!-- Save bar -->
-<div class="savebar">
+<div class="savebar" id="savebar" style="display:none">
   <div class="savebar-inner">
     <div class="status" id="status">Editing local changes.</div>
-    <div style="display:flex; gap:8px">
-      <a class="btn" href="index.html">Discard &amp; back</a>
-      <button class="btn primary" id="btnSave">Save changes</button>
+    <div class="right">
+      <a class="ghost" href="index.html">Discard</a>
+      <button class="primary" id="btnSave">Save changes</button>
     </div>
   </div>
 </div>
@@ -171,20 +207,47 @@
     <h3 id="modalTitle">Config JSON</h3>
     <textarea id="modalText" spellcheck="false"></textarea>
     <div class="modal-actions">
-      <button class="btn" id="modalCancel">Close</button>
-      <button class="btn primary" id="modalApply" style="display:none">Apply import</button>
+      <button class="ghost" id="modalCancel">Close</button>
+      <button class="primary" id="modalApply" style="display:none">Apply import</button>
     </div>
   </div>
 </div>
 
 <script>
-  let cfg = loadPricingConfig();
   const $ = id => document.getElementById(id);
+
+  // ---------- Gate ----------
+  function unlock() {
+    $("gate").style.display = "none";
+    $("app").style.display = "block";
+    $("savebar").style.display = "block";
+    init();
+  }
+  if (sessionStorage.getItem("spyne_admin_ok") === "1") {
+    unlock();
+  } else {
+    $("gateBtn").addEventListener("click", tryUnlock);
+    $("gatePass").addEventListener("keydown", e => { if (e.key === "Enter") tryUnlock(); });
+    $("gatePass").focus();
+  }
+  function tryUnlock() {
+    if ($("gatePass").value === window.ADMIN_PASSCODE) {
+      sessionStorage.setItem("spyne_admin_ok", "1");
+      unlock();
+    } else {
+      $("gateErr").textContent = "Incorrect passcode.";
+      $("gatePass").value = "";
+      $("gatePass").focus();
+    }
+  }
+
+  // ---------- Editor ----------
+  let cfg, inited = false;
   const status = (msg, warn) => { const s = $("status"); s.innerHTML = msg; s.className = "status" + (warn ? " warn" : ""); };
 
   function numInput(obj, key, opts = {}) {
     const inp = document.createElement("input");
-    inp.type = "number"; inp.className = "in"; inp.step = "1";
+    inp.type = "number"; inp.className = "in";
     inp.value = obj[key] == null ? "" : (opts.pct ? Math.round(obj[key] * 100) : obj[key]);
     inp.addEventListener("input", () => {
       const raw = inp.value.trim();
@@ -200,53 +263,64 @@
     inp.addEventListener("input", () => { obj[key] = inp.value; });
     return inp;
   }
-  function cell(node) { const td = document.createElement("td"); td.appendChild(node); return td; }
-  function rmCell(onClick) {
-    const td = document.createElement("td"); td.className = "rm";
-    const b = document.createElement("button"); b.className = "rmbtn"; b.innerHTML = "✕"; b.title = "Remove";
-    b.addEventListener("click", onClick); td.appendChild(b); return td;
+  function rmbtn(onClick) { const b = document.createElement("button"); b.className = "rmbtn"; b.innerHTML = "✕"; b.title = "Remove"; b.addEventListener("click", onClick); return b; }
+  function gridCols(cols) { return cols; }
+
+  function buildRow(parent, nodes, cols) {
+    const row = document.createElement("div"); row.className = "row"; row.style.gridTemplateColumns = cols;
+    nodes.forEach(n => row.appendChild(n)); parent.appendChild(row); return row;
+  }
+  function headRow(el, labels, cols) {
+    el.style.display = "grid"; el.style.gridTemplateColumns = cols; el.style.gap = "10px";
+    el.innerHTML = labels.map(l => `<span>${l}</span>`).join("");
   }
 
+  const VINI_COLS = "1fr 1fr 1fr 1fr 1fr 32px";
   function renderViniTiers() {
-    const tb = $("viniTierBody"); tb.innerHTML = "";
+    headRow($("viniTierHead"), ["Max VINs", "Sales · In", "Sales · Out", "Service · In", "Service · Out", ""], VINI_COLS);
+    const b = $("viniTierBody"); b.innerHTML = "";
     cfg.vini.tiers.forEach((t, i) => {
-      const tr = document.createElement("tr");
-      ["vins", "salesIn", "salesOut", "servIn", "servOut"].forEach(k => tr.appendChild(cell(numInput(t, k))));
-      tr.appendChild(rmCell(() => { cfg.vini.tiers.splice(i, 1); renderViniTiers(); }));
-      tb.appendChild(tr);
+      buildRow(b, [
+        numInput(t, "vins"), numInput(t, "salesIn"), numInput(t, "salesOut"), numInput(t, "servIn"), numInput(t, "servOut"),
+        rmbtn(() => { cfg.vini.tiers.splice(i, 1); renderViniTiers(); }),
+      ], VINI_COLS);
     });
   }
+
+  const INT_COLS = "2fr 1fr 1fr 32px";
   function renderInt() {
-    const tb = $("intBody"); tb.innerHTML = "";
+    headRow($("intHead"), ["Provider", "Type", "Cost / roof", ""], INT_COLS);
+    const b = $("intBody"); b.innerHTML = "";
     cfg.vini.integrations.forEach((it, i) => {
-      const tr = document.createElement("tr");
-      tr.appendChild(cell(textInput(it, "name")));
-      tr.appendChild(cell(textInput(it, "type")));
-      tr.appendChild(cell(numInput(it, "cost", { nullable: true })));
-      tr.appendChild(rmCell(() => { cfg.vini.integrations.splice(i, 1); renderInt(); }));
-      tb.appendChild(tr);
+      buildRow(b, [
+        textInput(it, "name"), textInput(it, "type"), numInput(it, "cost", { nullable: true }),
+        rmbtn(() => { cfg.vini.integrations.splice(i, 1); renderInt(); }),
+      ], INT_COLS);
     });
   }
+
+  const STUDIO_COLS = "1fr 1fr 1fr 1fr 1fr 32px";
   function renderStudioTiers() {
-    const tb = $("studioTierBody"); tb.innerHTML = "";
+    headRow($("studioTierHead"), ["Max VINs", "Lite", "Pro", "SmartMatch", "SmartCampaigns", ""], STUDIO_COLS);
+    const b = $("studioTierBody"); b.innerHTML = "";
     cfg.studio.tiers.forEach((t, i) => {
-      const tr = document.createElement("tr");
-      ["vins", "lite", "pro", "smartMatch", "smartCampaigns"].forEach(k => tr.appendChild(cell(numInput(t, k))));
-      tr.appendChild(rmCell(() => { cfg.studio.tiers.splice(i, 1); renderStudioTiers(); }));
-      tb.appendChild(tr);
+      buildRow(b, [
+        numInput(t, "vins"), numInput(t, "lite"), numInput(t, "pro"), numInput(t, "smartMatch"), numInput(t, "smartCampaigns"),
+        rmbtn(() => { cfg.studio.tiers.splice(i, 1); renderStudioTiers(); }),
+      ], STUDIO_COLS);
     });
   }
+
+  const ADDON_COLS = "120px 1fr 1.6fr";
   function renderAddons() {
-    const tb = $("addonBody"); tb.innerHTML = "";
+    headRow($("addonHead"), ["Key", "Label", "Sub-label"], ADDON_COLS);
+    const b = $("addonBody"); b.innerHTML = "";
     cfg.studio.addons.forEach(a => {
-      const tr = document.createElement("tr");
-      const keyCell = document.createElement("td"); keyCell.innerHTML = `<span class="num" style="color:var(--muted)">${a.key}</span>`;
-      tr.appendChild(keyCell);
-      tr.appendChild(cell(textInput(a, "label")));
-      tr.appendChild(cell(textInput(a, "sublabel")));
-      tb.appendChild(tr);
+      const key = document.createElement("span"); key.className = "num"; key.style.color = "var(--muted)"; key.style.fontSize = "12px"; key.style.alignSelf = "center"; key.textContent = a.key;
+      buildRow(b, [key, textInput(a, "label"), textInput(a, "sublabel")], ADDON_COLS);
     });
   }
+
   function renderDiscounts() {
     $("dBundle").value = Math.round(cfg.vini.bundle * 100);
     $("dR0").value = Math.round((cfg.vini.volume.r0 || 0) * 100);
@@ -266,45 +340,51 @@
 
   function renderAll() { renderViniTiers(); renderDiscounts(); renderInt(); renderStudioTiers(); renderAddons(); }
 
-  $("addViniTier").addEventListener("click", () => { cfg.vini.tiers.push({ vins: 0, salesIn: 0, salesOut: 0, servIn: 0, servOut: 0 }); renderViniTiers(); });
-  $("addInt").addEventListener("click", () => { cfg.vini.integrations.push({ name: "New provider", type: "sales", cost: null }); renderInt(); });
-  $("addStudioTier").addEventListener("click", () => { cfg.studio.tiers.push({ vins: 0, lite: 0, pro: 0, smartMatch: 0, smartCampaigns: 0 }); renderStudioTiers(); });
+  function init() {
+    if (inited) return; inited = true;
+    cfg = loadPricingConfig();
 
-  $("btnSave").addEventListener("click", () => { savePricingConfig(cfg); status("<b>Saved.</b> Changes are live on the calculator."); });
-  $("btnReset").addEventListener("click", () => {
-    if (!confirm("Reset all prices to the built-in defaults? This clears your saved changes.")) return;
-    resetPricingConfig(); cfg = loadPricingConfig(); renderAll(); bindDiscounts(); status("<b>Reset</b> to defaults. Click Save to keep, or Back to discard.", true);
-  });
+    // tabs
+    document.querySelectorAll(".tab").forEach(tab => {
+      tab.addEventListener("click", () => {
+        document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t === tab));
+        document.querySelectorAll(".panel").forEach(p => p.classList.toggle("active", p.dataset.panel === tab.dataset.panel));
+      });
+    });
 
-  // Export / Import
-  const modalBg = $("modalBg");
-  function openModal(title, text, showApply) {
-    $("modalTitle").textContent = title; $("modalText").value = text;
-    $("modalApply").style.display = showApply ? "inline-flex" : "none";
-    modalBg.classList.add("open");
+    $("addViniTier").addEventListener("click", () => { cfg.vini.tiers.push({ vins: 0, salesIn: 0, salesOut: 0, servIn: 0, servOut: 0 }); renderViniTiers(); });
+    $("addInt").addEventListener("click", () => { cfg.vini.integrations.push({ name: "New provider", type: "sales", cost: null }); renderInt(); });
+    $("addStudioTier").addEventListener("click", () => { cfg.studio.tiers.push({ vins: 0, lite: 0, pro: 0, smartMatch: 0, smartCampaigns: 0 }); renderStudioTiers(); });
+
+    $("btnSave").addEventListener("click", () => { savePricingConfig(cfg); status("<b>Saved.</b> Live on the calculator."); });
+    $("btnReset").addEventListener("click", () => {
+      if (!confirm("Reset all pricing to the built-in defaults? This clears saved changes.")) return;
+      resetPricingConfig(); cfg = loadPricingConfig(); renderAll(); bindDiscounts(); status("<b>Reset.</b> Click Save to keep.", true);
+    });
+
+    const modalBg = $("modalBg");
+    const openModal = (title, text, showApply) => { $("modalTitle").textContent = title; $("modalText").value = text; $("modalApply").style.display = showApply ? "inline-flex" : "none"; modalBg.classList.add("open"); };
+    $("modalCancel").addEventListener("click", () => modalBg.classList.remove("open"));
+    modalBg.addEventListener("click", e => { if (e.target === modalBg) modalBg.classList.remove("open"); });
+    $("btnExport").addEventListener("click", () => {
+      const json = JSON.stringify(cfg, null, 2);
+      openModal("Export config (copy or download)", json, false);
+      const blob = new Blob([json], { type: "application/json" });
+      const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "pricing-config.json"; a.click();
+    });
+    $("btnImport").addEventListener("click", () => openModal("Paste config JSON, then Apply", "", true));
+    $("modalApply").addEventListener("click", () => {
+      try {
+        const parsed = JSON.parse($("modalText").value);
+        if (!parsed.vini || !parsed.studio) throw new Error("Missing vini/studio");
+        cfg = parsed; renderAll(); bindDiscounts(); modalBg.classList.remove("open"); status("<b>Imported.</b> Review, then Save.");
+      } catch (e) { alert("Invalid JSON: " + e.message); }
+    });
+
+    renderAll();
+    bindDiscounts();
+    if (hasPricingOverride()) status("Loaded your saved changes.");
   }
-  $("modalCancel").addEventListener("click", () => modalBg.classList.remove("open"));
-  modalBg.addEventListener("click", e => { if (e.target === modalBg) modalBg.classList.remove("open"); });
-  $("btnExport").addEventListener("click", () => {
-    const json = JSON.stringify(cfg, null, 2);
-    openModal("Export config (copy or download)", json, false);
-    // also trigger a download
-    const blob = new Blob([json], { type: "application/json" });
-    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "pricing-config.json"; a.click();
-  });
-  $("btnImport").addEventListener("click", () => openModal("Paste config JSON, then Apply import", "", true));
-  $("modalApply").addEventListener("click", () => {
-    try {
-      const parsed = JSON.parse($("modalText").value);
-      if (!parsed.vini || !parsed.studio) throw new Error("Missing vini/studio");
-      cfg = parsed; renderAll(); bindDiscounts(); modalBg.classList.remove("open");
-      status("<b>Imported.</b> Review, then click Save to apply.");
-    } catch (e) { alert("Invalid JSON: " + e.message); }
-  });
-
-  renderAll();
-  bindDiscounts();
-  if (hasPricingOverride()) status("Loaded your saved changes. Edit and Save to update.");
 </script>
 </body>
 </html>

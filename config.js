@@ -7,6 +7,10 @@
  */
 window.PRICING_KEY = "spyne_pricing_config_v1";
 
+/* Admin passcode (frontend deterrent, not real security — anyone can read source).
+ * Change this value to rotate it. */
+window.ADMIN_PASSCODE = "spyne2026";
+
 window.PRICING_DEFAULTS = {
   vini: {
     // Per agent, per rooftop, per month. Add or remove tiers freely.
