@@ -11,8 +11,8 @@
 window.PRICING_KEY = "spyne_pricing_config_v1";
 
 // ---- Supabase ----
-window.SUPABASE_URL = "https://YOUR_PROJECT.supabase.co"; // e.g. https://abcd1234.supabase.co
-window.SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";      // the public "anon" key (safe to expose)
+window.SUPABASE_URL = "https://ldogkqhabxxwhaxjgzpi.supabase.co";
+window.SUPABASE_ANON_KEY = "sb_publishable_REMkOPZmiyrtB9-Z5_F0ew_ZR32xPoq"; // public publishable key (safe to expose)
 window.SUPABASE_TABLE = "pricing_config";
 window.SUPABASE_ROW_ID = 1;
 
