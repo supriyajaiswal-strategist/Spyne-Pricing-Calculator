@@ -525,7 +525,7 @@
           </div>
         </div>
         <div class="sum-foot">
-          <div class="annual-row">
+          <div class="annual-row" id="agentsFootRow" style="display:none">
             <span class="l">Agents · <span id="grpCountFoot" class="num">1</span> rooftop(s)</span>
             <span class="v num" id="agentsTotal">$0</span>
           </div>
@@ -533,7 +533,7 @@
             <span class="l">Integrations · <span class="num" id="grpCountFoot2">1</span> rooftop(s)</span>
             <span class="v num" id="intTotal">$0</span>
           </div>
-          <div class="divider" style="margin:12px 0 10px"></div>
+          <div class="divider" id="footDivider" style="margin:12px 0 10px; display:none"></div>
           <div class="annual-row">
             <span class="l" style="font-size:13px">Total monthly</span>
             <span class="v num" id="monthlyTotal" style="font-size:18px">$0</span>
@@ -897,15 +897,17 @@
     const intTotal = intCost * state.groups;
     const monthlyTotal = agentsTotal + intTotal;
 
-    document.getElementById("agentsTotal").textContent = fmt(agentsTotal);
-    const intRow = document.getElementById("intFootRow");
-    if (intCount > 0) {
-      intRow.style.display = "flex";
+    // Only show the Agents/Integrations split when integrations add something;
+    // otherwise Agents total just duplicates Total monthly.
+    const showSplit = intCount > 0;
+    document.getElementById("agentsFootRow").style.display = showSplit ? "flex" : "none";
+    document.getElementById("footDivider").style.display = showSplit ? "block" : "none";
+    document.getElementById("intFootRow").style.display = showSplit ? "flex" : "none";
+    if (showSplit) {
+      document.getElementById("agentsTotal").textContent = fmt(agentsTotal);
       document.getElementById("grpCountFoot2").textContent = state.groups;
       document.getElementById("intTotal").textContent =
         (intCost === 0 && intTbd > 0) ? "TBD" : fmt(intTotal);
-    } else {
-      intRow.style.display = "none";
     }
     document.getElementById("monthlyTotal").textContent = fmt(monthlyTotal);
     document.getElementById("annualTotal").textContent = fmt(monthlyTotal * 12);
