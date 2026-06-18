@@ -113,6 +113,7 @@
     <p class="desc">All-4-agents bundle and rooftop volume tiers.</p>
     <div class="field-grid">
       <div class="field"><label>All-4 bundle</label><div class="suffix"><input class="in" id="dBundle" type="number" step="1"><span class="s">%</span></div></div>
+      <div class="field"><label>Base volume (under tier 1)</label><div class="suffix"><input class="in" id="dR0" type="number" step="1"><span class="s">%</span></div><div class="hint">Applies below tier 1</div></div>
       <div class="field"><label>Volume tier 1 from</label><div class="suffix"><input class="in" id="dT1" type="number" step="1"><span class="s">rooftops</span></div><div class="hint">First volume threshold</div></div>
       <div class="field"><label>Tier 1 discount</label><div class="suffix"><input class="in" id="dR1" type="number" step="1"><span class="s">%</span></div></div>
       <div class="field"><label>Volume tier 2 from</label><div class="suffix"><input class="in" id="dT2" type="number" step="1"><span class="s">rooftops</span></div><div class="hint">Second volume threshold</div></div>
@@ -248,6 +249,7 @@
   }
   function renderDiscounts() {
     $("dBundle").value = Math.round(cfg.vini.bundle * 100);
+    $("dR0").value = Math.round((cfg.vini.volume.r0 || 0) * 100);
     $("dT1").value = cfg.vini.volume.t1;
     $("dR1").value = Math.round(cfg.vini.volume.r1 * 100);
     $("dT2").value = cfg.vini.volume.t2;
@@ -255,6 +257,7 @@
   }
   function bindDiscounts() {
     $("dBundle").addEventListener("input", e => cfg.vini.bundle = (parseFloat(e.target.value) || 0) / 100);
+    $("dR0").addEventListener("input", e => cfg.vini.volume.r0 = (parseFloat(e.target.value) || 0) / 100);
     $("dT1").addEventListener("input", e => cfg.vini.volume.t1 = parseInt(e.target.value) || 0);
     $("dR1").addEventListener("input", e => cfg.vini.volume.r1 = (parseFloat(e.target.value) || 0) / 100);
     $("dT2").addEventListener("input", e => cfg.vini.volume.t2 = parseInt(e.target.value) || 0);

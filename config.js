@@ -16,8 +16,8 @@ window.PRICING_DEFAULTS = {
       { vins: 200, salesIn: 1600, salesOut: 2400, servIn: 1920, servOut: 2880 },
       { vins: 300, salesIn: 2100, salesOut: 3150, servIn: 2520, servOut: 3780 },
     ],
-    bundle: 0.10,                                  // all-4-agents discount (decimal)
-    volume: { t1: 3, r1: 0.10, t2: 7, r2: 0.20 }, // rooftop volume tiers
+    bundle: 0.10,                                            // all-4-agents discount (decimal)
+    volume: { t1: 3, t2: 7, r0: 0.10, r1: 0.20, r2: 0.30 }, // rooftop volume tiers: r0=under t1, r1=t1..t2-1, r2=t2+
     integrations: [
       { name: "Vinsolutions",             type: "sales",    cost: 95 },
       { name: "CDK (Elead)",              type: "sales",    cost: 500 },

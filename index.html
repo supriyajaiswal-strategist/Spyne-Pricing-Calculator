@@ -722,7 +722,7 @@
 
   const fmt  = n => "$" + Math.round(n).toLocaleString("en-US");
   const fmt2 = n => "$" + n.toLocaleString("en-US", {minimumFractionDigits:2, maximumFractionDigits:2});
-  const groupDiscount = g => g >= VOL.t2 ? VOL.r2 : (g >= VOL.t1 ? VOL.r1 : 0);
+  const groupDiscount = g => g >= VOL.t2 ? VOL.r2 : (g >= VOL.t1 ? VOL.r1 : (VOL.r0 || 0));
 
   // Combined VINI + Studio total (shown in the fixed bottom bar)
   const totals = { vini: 0, studio: 0 };
@@ -736,9 +736,9 @@
 
   function renderVolTiers() {
     const defs = [
-      { rate: 0,      label: `under ${VOL.t1}` },
-      { rate: VOL.r1, label: VOL.t2 - VOL.t1 <= 1 ? `${VOL.t1}` : `${VOL.t1} to ${VOL.t2 - 1}` },
-      { rate: VOL.r2, label: `${VOL.t2} or more` },
+      { rate: VOL.r0 || 0, label: `under ${VOL.t1}` },
+      { rate: VOL.r1,      label: VOL.t2 - VOL.t1 <= 1 ? `${VOL.t1}` : `${VOL.t1} to ${VOL.t2 - 1}` },
+      { rate: VOL.r2,      label: `${VOL.t2} or more` },
     ];
     document.getElementById("volTiers").innerHTML = defs.map(d =>
       `<div class="vol-tier" data-vol="${Math.round(d.rate*100)}">${Math.round(d.rate*100)}%<small>${d.label}</small></div>`
@@ -929,9 +929,9 @@
       el.classList.toggle("on", Number(el.dataset.vol) === Math.round(gDisc * 100));
     });
     const vbn = document.getElementById("volBenefit");
-    const r1p = Math.round(VOL.r1 * 100), r2p = Math.round(VOL.r2 * 100);
+    const r0p = Math.round((VOL.r0 || 0) * 100), r1p = Math.round(VOL.r1 * 100), r2p = Math.round(VOL.r2 * 100);
     if (state.groups < VOL.t1) {
-      vbn.innerHTML = `Commit <b>${VOL.t1} rooftops</b> to unlock ${r1p}% off (<b>${fmt(afterBundle*VOL.r1)}/mo</b> per rooftop).`;
+      vbn.innerHTML = `${r0p}% applied. Commit <b>${VOL.t1} rooftops</b> to step up to ${r1p}% off (<b>${fmt(afterBundle*VOL.r1)}/mo</b> per rooftop).`;
     } else if (state.groups < VOL.t2) {
       vbn.innerHTML = `${r1p}% applied. Reach <b>${VOL.t2} rooftops</b> for ${r2p}% off (<b>${fmt(afterBundle*VOL.r2)}/mo</b> per rooftop).`;
     } else {
@@ -975,7 +975,7 @@
     if (activeCount === 0) {
       out.push(insItem("warn", "No agents are active. Turn one on in step 2 to see pricing."));
     }
-    const bp = Math.round(BUNDLE_DISCOUNT * 100), r1p = Math.round(VOL.r1 * 100), r2p = Math.round(VOL.r2 * 100);
+    const bp = Math.round(BUNDLE_DISCOUNT * 100), r0p = Math.round((VOL.r0 || 0) * 100), r1p = Math.round(VOL.r1 * 100), r2p = Math.round(VOL.r2 * 100);
     if (!allFour && activeCount > 0) {
       const full = AGENTS.reduce((s,a) => s + t[a.key], 0);
       out.push(insItem("up", `Running <b>all four agents</b> unlocks a ${bp}% bundle discount, worth about <b>${fmt(full*BUNDLE_DISCOUNT)}/mo</b> per rooftop. You have ${activeCount} of 4 active.`));
@@ -983,7 +983,7 @@
       out.push(insItem("up", `<b>Full VINI stack active.</b> The ${bp}% all-agents bundle discount is applied.`));
     }
     if (state.groups < VOL.t1) {
-      out.push(insItem("info", `Add <b>${VOL.t1 - state.groups} more rooftop(s)</b> (${VOL.t1} total) to reach the ${r1p}% volume tier.`));
+      out.push(insItem("info", `At the ${r0p}% volume tier. Add <b>${VOL.t1 - state.groups} more rooftop(s)</b> (${VOL.t1} total) to reach ${r1p}%.`));
     } else if (state.groups < VOL.t2) {
       out.push(insItem("info", `You are at the ${r1p}% volume tier. Reaching <b>${VOL.t2} rooftops</b> steps you up to ${r2p}%.`));
     } else {
