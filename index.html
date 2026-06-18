@@ -108,26 +108,23 @@
   }
   .stepper input:focus { outline: none; }
 
-  /* Agent chips */
-  .chip-row { display: flex; flex-wrap: nowrap; gap: 8px; }
-  @media (max-width: 720px) { .chip-row { flex-wrap: wrap; } }
-  .chip-text b { font-weight: 600; color: inherit; }
-  .chip-text { white-space: nowrap; }
-  .chip {
-    display: inline-flex; align-items: center; gap: 8px; cursor: pointer;
-    border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px 8px 10px;
-    font-size: 13px; font-weight: 500; color: var(--ink-2); background: var(--surface);
-    transition: border-color 0.12s, background 0.12s, color 0.12s; user-select: none;
+  /* Agent selector — clean checkboxes */
+  .chip-row { display: flex; flex-wrap: wrap; gap: 10px 26px; }
+  .agent-opt {
+    display: inline-flex; align-items: center; gap: 9px; cursor: pointer; user-select: none;
+    font-size: 13.5px; color: var(--ink-2);
   }
-  .chip:hover { border-color: #cbd5e1; }
-  .chip.on { border-color: var(--brand); background: var(--brand-soft); color: var(--ink); }
-  .chip .box {
-    width: 16px; height: 16px; border-radius: 5px; border: 1.5px solid var(--muted);
+  .agent-opt:hover { color: var(--ink); }
+  .agent-label b { font-weight: 600; color: var(--ink); }
+  .agent-opt.on { color: var(--ink); }
+  .agent-cbx {
+    width: 18px; height: 18px; border-radius: 5px; border: 1.5px solid #cbd5e1; background: var(--surface);
     flex: 0 0 auto; position: relative; transition: 0.12s;
   }
-  .chip.on .box { border-color: var(--brand); background: var(--brand); }
-  .chip.on .box::after {
-    content: ""; position: absolute; left: 4.5px; top: 1.5px; width: 4px; height: 8px;
+  .agent-opt:hover .agent-cbx { border-color: var(--brand); }
+  .agent-opt.on .agent-cbx { border-color: var(--brand); background: var(--brand); }
+  .agent-opt.on .agent-cbx::after {
+    content: ""; position: absolute; left: 5.5px; top: 2px; width: 4px; height: 8px;
     border: solid #fff; border-width: 0 2px 2px 0; transform: rotate(45deg);
   }
 
@@ -242,7 +239,7 @@
     color: var(--ink-2); padding: 4px 10px; text-align: center; border: none;
   }
   table.tier tbody td {
-    padding: 7px 10px; border-bottom: 1px solid var(--line-2);
+    padding: 9px 10px; border-bottom: 1px solid var(--line-2);
     text-align: right; font-size: 13px;
   }
   table.tier tbody td.lead { text-align: left; }
@@ -260,7 +257,7 @@
     display: flex; justify-content: space-between; align-items: center; gap: 14px;
     padding: 11px 13px; border: 1px solid var(--line); border-radius: var(--card-radius);
   }
-  .disc-group { flex-wrap: wrap; }
+  .disc-group { flex-wrap: nowrap; }
   .disc-name { font-size: 13.5px; font-weight: 600; display: block; }
   .disc-desc { font-size: 11.5px; color: var(--muted); margin-top: 1px; }
   .disc-right { display: flex; align-items: center; gap: 12px; flex: 0 0 auto; }
@@ -291,8 +288,8 @@
   .int-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 12px; }
   .int-summary { font-family: var(--font-mono); font-size: 12px; color: var(--ink-2); white-space: nowrap; }
   .int-summary b { color: var(--brand); font-weight: 600; }
-  .int-groups { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
-  @media (max-width: 560px) { .int-groups { grid-template-columns: 1fr; } }
+  .int-groups { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+  @media (max-width: 640px) { .int-groups { grid-template-columns: 1fr; } }
   .int-group { min-width: 0; }
   .int-glabel { display: block; font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
   .int-left { display: flex; align-items: center; gap: 9px; min-width: 0; }
@@ -442,8 +439,8 @@
     </div>
   </section>
 
-  <div class="grid grid-3">
-    <!-- COL 1: tier table -->
+  <div class="grid">
+    <!-- LEFT: tier table + discounts + integrations -->
     <div>
       <section class="card">
         <p class="panel-title"><span class="step">3</span> Select Max VINs / rooftop</p>
@@ -467,18 +464,7 @@
         </table>
       </section>
 
-      <section class="card insights">
-        <div class="ins-head">
-          <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a7 7 0 0 0-4 12.7V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.3A7 7 0 0 0 12 2Z"/><path d="M9 21h6"/></svg>
-          <span class="t">Insights</span>
-        </div>
-        <ul class="ins-list" id="insights"></ul>
-      </section>
-    </div>
-
-    <!-- COL 2: discounts + integrations -->
-    <div>
-      <section class="card">
+      <section class="card" style="margin-top:16px">
         <p class="panel-title">Discounts</p>
         <p class="panel-sub">Stack savings by running the full agent suite and committing more rooftops.</p>
         <div class="disc-list">
@@ -566,6 +552,14 @@
           </div>
           <button class="cta">Request a formal quote</button>
         </div>
+      </section>
+
+      <section class="card insights">
+        <div class="ins-head">
+          <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a7 7 0 0 0-4 12.7V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.3A7 7 0 0 0 12 2Z"/><path d="M9 21h6"/></svg>
+          <span class="t">Insights</span>
+        </div>
+        <ul class="ins-list" id="insights"></ul>
       </section>
     </div>
   </div>
@@ -745,17 +739,17 @@
     const wrap = document.getElementById("agentChips");
     wrap.innerHTML = "";
     AGENTS.forEach(a => {
-      const chip = document.createElement("label");
-      chip.className = "chip" + (state.agents[a.key] ? " on" : "");
-      chip.dataset.agent = a.key;
+      const opt = document.createElement("label");
+      opt.className = "agent-opt" + (state.agents[a.key] ? " on" : "");
+      opt.dataset.agent = a.key;
       const short = a.prod.replace("VINI ", "");
-      chip.innerHTML = `<span class="box"></span><span class="chip-text"><b>${short}</b> ${a.label}</span>`;
-      chip.addEventListener("click", e => {
+      opt.innerHTML = `<span class="agent-cbx"></span><span class="agent-label"><b>${short}</b> ${a.label}</span>`;
+      opt.addEventListener("click", e => {
         e.preventDefault();
         state.agents[a.key] = !state.agents[a.key];
         recalc();
       });
-      wrap.appendChild(chip);
+      wrap.appendChild(opt);
     });
   }
 
@@ -858,7 +852,7 @@
 
     // sync controls
     renderTierTable();
-    document.querySelectorAll(".chip").forEach(c => {
+    document.querySelectorAll(".agent-opt").forEach(c => {
       c.classList.toggle("on", state.agents[c.dataset.agent]);
     });
     // dim table header cols for off agents
