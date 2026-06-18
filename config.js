@@ -1,11 +1,20 @@
 /* Shared pricing config for the Spyne Pricing Calculator.
  *
- * DEFAULTS below are the built-in prices. The admin page (admin.html) can override
- * them; overrides are saved in the browser (localStorage) and read by the calculator.
- * To make an edit the permanent default for everyone, edit the DEFAULTS here (or use
- * Export on the admin page and paste the JSON in), then commit + redeploy.
+ * DEFAULTS below are the built-in baseline prices. The live shared prices are stored
+ * in Supabase (one row in the `pricing_config` table). The admin page saves there, the
+ * calculator reads from there, so edits are shared across everyone instantly. If Supabase
+ * is unreachable / unconfigured it falls back to a local cache, then to DEFAULTS.
+ *
+ * SETUP: paste your Supabase project URL and anon (public) key below, and run the SQL
+ * in SUPABASE_SETUP.sql once in the Supabase SQL editor.
  */
 window.PRICING_KEY = "spyne_pricing_config_v1";
+
+// ---- Supabase ----
+window.SUPABASE_URL = "https://YOUR_PROJECT.supabase.co"; // e.g. https://abcd1234.supabase.co
+window.SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";      // the public "anon" key (safe to expose)
+window.SUPABASE_TABLE = "pricing_config";
+window.SUPABASE_ROW_ID = 1;
 
 window.PRICING_DEFAULTS = {
   vini: {
@@ -16,8 +25,8 @@ window.PRICING_DEFAULTS = {
       { vins: 200, salesIn: 1600, salesOut: 2000, servIn: 1800, servOut: 2200 },
       { vins: 300, salesIn: 2100, salesOut: 2600, servIn: 2300, servOut: 2860 },
     ],
-    bundle: 0.10,                                          // all-4-agents discount (decimal)
-    volume: { t1: 3, t2: 7, r0: 0, r1: 0.10, r2: 0.20 },  // rooftop volume tiers: r0=under t1, r1=t1..t2-1, r2=t2+
+    bundle: 0.10,                                            // all-4-agents discount (decimal)
+    volume: { t1: 3, t2: 7, r0: 0.10, r1: 0.20, r2: 0.30 }, // rooftop volume tiers: r0=under t1, r1=t1..t2-1, r2=t2+
     integrations: [
       { name: "Vinsolutions",             type: "sales",    cost: 95 },
       { name: "CDK (Elead)",              type: "sales",    cost: 500 },
@@ -63,24 +72,37 @@ function mergePricingConfig(d, saved) {
   };
 }
 
-/* Load the SHARED config from the backend (Vercel KV via /api/config).
- * Falls back to a local cache, then to built-in defaults, so it still works
- * with no backend (e.g. local preview). */
+function sbConfigured() {
+  return window.SUPABASE_URL && window.SUPABASE_ANON_KEY &&
+    !window.SUPABASE_URL.includes("YOUR_PROJECT") && !window.SUPABASE_ANON_KEY.includes("YOUR_");
+}
+function sbHeaders(extra) {
+  return Object.assign({ apikey: window.SUPABASE_ANON_KEY, Authorization: "Bearer " + window.SUPABASE_ANON_KEY }, extra || {});
+}
+function sbUrl(qs) {
+  return window.SUPABASE_URL + "/rest/v1/" + window.SUPABASE_TABLE + (qs || "");
+}
+
+/* Load the SHARED config from Supabase. Falls back to a local cache, then to
+ * built-in defaults, so it still works unconfigured / offline (e.g. local preview). */
 window.loadPricingConfig = async function () {
   const d = window.PRICING_DEFAULTS;
-  try {
-    const r = await fetch("/api/config", { cache: "no-store" });
-    if (r.ok) {
-      const { config } = await r.json();
-      try { localStorage.setItem(window.PRICING_KEY, JSON.stringify(config || {})); } catch (e) {}
-      return mergePricingConfig(d, config);
-    }
-  } catch (e) { /* no backend reachable — fall through */ }
+  if (sbConfigured()) {
+    try {
+      const r = await fetch(sbUrl("?id=eq." + window.SUPABASE_ROW_ID + "&select=data"), { headers: sbHeaders(), cache: "no-store" });
+      if (r.ok) {
+        const rows = await r.json();
+        const data = rows && rows[0] ? rows[0].data : null;
+        try { localStorage.setItem(window.PRICING_KEY, JSON.stringify(data || {})); } catch (e) {}
+        return mergePricingConfig(d, data);
+      }
+    } catch (e) { /* unreachable — fall through */ }
+  }
   try { const s = localStorage.getItem(window.PRICING_KEY); if (s) return mergePricingConfig(d, JSON.parse(s)); } catch (e) {}
   return mergePricingConfig(d, null);
 };
 
-/* Save to the shared backend. Returns { ok, shared, error }.
+/* Save to Supabase (upsert the single config row). Returns { ok, shared, error }.
  * With no backend reachable, saves locally so dev still works. */
 function saveLocal(cfg) {
   try { localStorage.setItem(window.PRICING_KEY, JSON.stringify(cfg)); return { ok: true, shared: false }; }
@@ -88,16 +110,21 @@ function saveLocal(cfg) {
 }
 
 window.savePricingConfig = async function (cfg) {
-  try {
-    const r = await fetch("/api/config", {
-      method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ config: cfg }),
-    });
-    if (r.ok) { try { localStorage.setItem(window.PRICING_KEY, JSON.stringify(cfg)); } catch (e) {} return { ok: true, shared: true }; }
-    return saveLocal(cfg); // backend absent/erroring -> local fallback (dev)
-  } catch (e) {
-    return saveLocal(cfg);
+  if (sbConfigured()) {
+    try {
+      const r = await fetch(sbUrl(), {
+        method: "POST",
+        headers: sbHeaders({ "Content-Type": "application/json", Prefer: "resolution=merge-duplicates,return=minimal" }),
+        body: JSON.stringify({ id: window.SUPABASE_ROW_ID, data: cfg }),
+      });
+      if (r.ok) { try { localStorage.setItem(window.PRICING_KEY, JSON.stringify(cfg)); } catch (e) {} return { ok: true, shared: true }; }
+      const msg = await r.text().catch(() => "");
+      return { ok: false, error: "Supabase " + r.status + (msg ? ": " + msg.slice(0, 120) : "") };
+    } catch (e) {
+      return { ok: false, error: "Network error reaching Supabase" };
+    }
   }
+  return saveLocal(cfg); // not configured -> local fallback (dev)
 };
 
 /* Reset = write the built-in defaults to the shared store. */
