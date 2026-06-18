@@ -690,7 +690,8 @@
 
 <script>
   // ---- Pricing model (editable via admin.html / config.js) ----
-  const CFG = loadPricingConfig();
+  (async function () {
+  const CFG = await loadPricingConfig();
   const TIERS = CFG.vini.tiers;
   const AGENTS = [
     { key: "salesIn",  prod: "VINI Sales",   label: "Inbound",  full: "VINI Sales · Inbound" },
@@ -1211,6 +1212,7 @@
   renderIntegrations();
   recalc();
   sRecalc();
+  })();
 </script>
 </body>
 </html>

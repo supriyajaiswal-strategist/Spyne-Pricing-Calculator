@@ -7,8 +7,8 @@
  */
 window.PRICING_KEY = "spyne_pricing_config_v1";
 
-/* Admin passcode (frontend deterrent, not real security — anyone can read source).
- * Change this value to rotate it. */
+/* Local-dev fallback passcode only. In production the REAL passcode lives in the
+ * Vercel env var ADMIN_PASSCODE and is checked server-side (never exposed here). */
 window.ADMIN_PASSCODE = "spyne2026";
 
 window.PRICING_DEFAULTS = {
@@ -58,17 +58,70 @@ window.PRICING_DEFAULTS = {
   },
 };
 
-window.loadPricingConfig = function () {
-  const d = JSON.parse(JSON.stringify(window.PRICING_DEFAULTS));
-  let saved = null;
-  try { const s = localStorage.getItem(window.PRICING_KEY); if (s) saved = JSON.parse(s); } catch (e) {}
-  if (!saved) return d;
+function mergePricingConfig(d, saved) {
+  if (!saved) return JSON.parse(JSON.stringify(d));
   // shallow-merge one level into vini/studio so new default keys survive old saves
   return {
     vini:   Object.assign({}, d.vini,   saved.vini   || {}),
     studio: Object.assign({}, d.studio, saved.studio || {}),
   };
+}
+
+/* Load the SHARED config from the backend (Vercel KV via /api/config).
+ * Falls back to a local cache, then to built-in defaults, so it still works
+ * with no backend (e.g. local preview). */
+window.loadPricingConfig = async function () {
+  const d = window.PRICING_DEFAULTS;
+  try {
+    const r = await fetch("/api/config", { cache: "no-store" });
+    if (r.ok) {
+      const { config } = await r.json();
+      try { localStorage.setItem(window.PRICING_KEY, JSON.stringify(config || {})); } catch (e) {}
+      return mergePricingConfig(d, config);
+    }
+  } catch (e) { /* no backend reachable — fall through */ }
+  try { const s = localStorage.getItem(window.PRICING_KEY); if (s) return mergePricingConfig(d, JSON.parse(s)); } catch (e) {}
+  return mergePricingConfig(d, null);
 };
-window.savePricingConfig  = function (cfg) { localStorage.setItem(window.PRICING_KEY, JSON.stringify(cfg)); };
-window.resetPricingConfig = function () { localStorage.removeItem(window.PRICING_KEY); };
+
+/* Save to the shared backend. Requires the admin passcode (validated server-side).
+ * Returns { ok, shared, error }. With no backend, saves locally so dev still works. */
+function saveLocal(cfg) {
+  try { localStorage.setItem(window.PRICING_KEY, JSON.stringify(cfg)); return { ok: true, shared: false }; }
+  catch (e) { return { ok: false, error: "No storage available" }; }
+}
+
+window.savePricingConfig = async function (cfg, passcode) {
+  try {
+    const r = await fetch("/api/config", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ passcode, config: cfg }),
+    });
+    if (r.ok) { try { localStorage.setItem(window.PRICING_KEY, JSON.stringify(cfg)); } catch (e) {} return { ok: true, shared: true }; }
+    if (r.status === 401) return { ok: false, error: "Invalid passcode" };
+    return saveLocal(cfg); // backend absent/erroring -> local fallback (dev)
+  } catch (e) {
+    return saveLocal(cfg);
+  }
+};
+
+/* Check the passcode. 200 = ok, 401 = wrong; anything else (no backend) -> local compare. */
+window.verifyPasscode = async function (passcode) {
+  try {
+    const r = await fetch("/api/config", {
+      method: "POST", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ passcode, verify: true }),
+    });
+    if (r.ok) return true;
+    if (r.status === 401) return false;
+    return passcode === window.ADMIN_PASSCODE; // no real backend
+  } catch (e) {
+    return passcode === window.ADMIN_PASSCODE;
+  }
+};
+
+/* Reset = write the built-in defaults to the shared store. */
+window.resetPricingConfig = async function (passcode) {
+  return window.savePricingConfig(JSON.parse(JSON.stringify(window.PRICING_DEFAULTS)), passcode);
+};
 window.hasPricingOverride = function () { try { return !!localStorage.getItem(window.PRICING_KEY); } catch (e) { return false; } };

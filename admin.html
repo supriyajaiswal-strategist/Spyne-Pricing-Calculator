@@ -217,27 +217,32 @@
   const $ = id => document.getElementById(id);
 
   // ---------- Gate ----------
+  let passcode = "";
   function unlock() {
     $("gate").style.display = "none";
     $("app").style.display = "block";
     $("savebar").style.display = "block";
     init();
   }
-  if (sessionStorage.getItem("spyne_admin_ok") === "1") {
-    unlock();
-  } else {
+  const savedPass = sessionStorage.getItem("spyne_admin_pass");
+  if (savedPass) { passcode = savedPass; unlock(); }
+  else {
     $("gateBtn").addEventListener("click", tryUnlock);
     $("gatePass").addEventListener("keydown", e => { if (e.key === "Enter") tryUnlock(); });
     $("gatePass").focus();
   }
-  function tryUnlock() {
-    if ($("gatePass").value === window.ADMIN_PASSCODE) {
-      sessionStorage.setItem("spyne_admin_ok", "1");
+  async function tryUnlock() {
+    const entered = $("gatePass").value;
+    $("gateBtn").textContent = "Checking…"; $("gateBtn").disabled = true; $("gateErr").textContent = "";
+    const ok = await verifyPasscode(entered);
+    $("gateBtn").textContent = "Unlock"; $("gateBtn").disabled = false;
+    if (ok) {
+      passcode = entered;
+      sessionStorage.setItem("spyne_admin_pass", entered);
       unlock();
     } else {
       $("gateErr").textContent = "Incorrect passcode.";
-      $("gatePass").value = "";
-      $("gatePass").focus();
+      $("gatePass").value = ""; $("gatePass").focus();
     }
   }
 
@@ -340,9 +345,10 @@
 
   function renderAll() { renderViniTiers(); renderDiscounts(); renderInt(); renderStudioTiers(); renderAddons(); }
 
-  function init() {
+  async function init() {
     if (inited) return; inited = true;
-    cfg = loadPricingConfig();
+    status("Loading…");
+    cfg = await loadPricingConfig();
 
     // tabs
     document.querySelectorAll(".tab").forEach(tab => {
@@ -356,10 +362,21 @@
     $("addInt").addEventListener("click", () => { cfg.vini.integrations.push({ name: "New provider", type: "sales", cost: null }); renderInt(); });
     $("addStudioTier").addEventListener("click", () => { cfg.studio.tiers.push({ vins: 0, lite: 0, pro: 0, smartMatch: 0, smartCampaigns: 0 }); renderStudioTiers(); });
 
-    $("btnSave").addEventListener("click", () => { savePricingConfig(cfg); status("<b>Saved.</b> Live on the calculator."); });
-    $("btnReset").addEventListener("click", () => {
-      if (!confirm("Reset all pricing to the built-in defaults? This clears saved changes.")) return;
-      resetPricingConfig(); cfg = loadPricingConfig(); renderAll(); bindDiscounts(); status("<b>Reset.</b> Click Save to keep.", true);
+    $("btnSave").addEventListener("click", async () => {
+      $("btnSave").disabled = true; status("Saving…");
+      const res = await savePricingConfig(cfg, passcode);
+      $("btnSave").disabled = false;
+      if (res.ok && res.shared) status("<b>Saved for everyone.</b> Live on the calculator.");
+      else if (res.ok) status("<b>Saved locally</b> (backend not reachable).", true);
+      else status("Save failed: " + (res.error || "unknown") + ".", true);
+    });
+    $("btnReset").addEventListener("click", async () => {
+      if (!confirm("Reset all pricing to the built-in defaults for everyone?")) return;
+      $("btnReset").disabled = true; status("Resetting…");
+      const res = await resetPricingConfig(passcode);
+      $("btnReset").disabled = false;
+      if (res.ok) { cfg = await loadPricingConfig(); renderAll(); bindDiscounts(); status("<b>Reset to defaults.</b>"); }
+      else status("Reset failed: " + (res.error || "unknown") + ".", true);
     });
 
     const modalBg = $("modalBg");
