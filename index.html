@@ -48,18 +48,18 @@
   }
 
   .num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
-  .wrap { max-width: 1180px; margin: 0 auto; padding: 40px 28px 110px; }
+  .wrap { max-width: 1320px; margin: 0 auto; padding: 14px 28px 52px; }
 
   /* Header */
-  header.page { margin-bottom: 28px; }
+  header.page { margin-bottom: 6px; }
   .eyebrow {
-    font-size: 12px; font-weight: 600; letter-spacing: 0.08em;
+    font-size: 11px; font-weight: 600; letter-spacing: 0.08em;
     text-transform: uppercase; color: var(--brand);
-    display: flex; align-items: center; gap: 8px; margin-bottom: 10px;
+    display: flex; align-items: center; gap: 8px; margin-bottom: 6px;
   }
   .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--brand); }
-  h1.title { font-size: 30px; font-weight: 700; letter-spacing: -0.02em; margin: 0 0 8px; }
-  .subtitle { font-size: 15px; color: var(--ink-2); max-width: 640px; margin: 0; }
+  h1.title { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; margin: 0 0 4px; }
+  .subtitle { font-size: 13px; color: var(--muted); max-width: 640px; margin: 0; }
   .edit-link {
     position: absolute; top: 0; right: 0; display: inline-flex; align-items: center; gap: 7px;
     font-size: 13px; font-weight: 600; color: var(--ink-2); text-decoration: none;
@@ -72,14 +72,14 @@
   /* Card */
   .card {
     background: var(--surface); border: 1px solid var(--line);
-    border-radius: var(--card-radius); padding: 22px 24px;
+    border-radius: var(--card-radius); padding: 15px 18px;
     box-shadow: var(--card-shadow);
   }
 
   /* Config bar */
-  .config-card { margin-bottom: 22px; }
+  .config-card { margin-bottom: 10px; }
   .config-grid {
-    display: grid; grid-template-columns: auto 1fr; gap: 36px; align-items: start;
+    display: grid; grid-template-columns: auto 1fr; gap: 28px; align-items: start;
   }
   @media (max-width: 860px) { .config-grid { grid-template-columns: 1fr; gap: 22px; } }
 
@@ -98,13 +98,13 @@
   /* Rooftops stepper */
   .stepper { display: flex; align-items: center; border: 1px solid var(--line); border-radius: 10px; overflow: hidden; width: max-content; }
   .stepper button {
-    width: 40px; height: 44px; border: none; background: var(--surface); cursor: pointer;
-    font-size: 19px; color: var(--ink-2); font-family: var(--font-sans);
+    width: 38px; height: 38px; border: none; background: var(--surface); cursor: pointer;
+    font-size: 18px; color: var(--ink-2); font-family: var(--font-sans);
   }
   .stepper button:hover { background: var(--line-2); }
   .stepper input {
-    width: 60px; height: 44px; border: none; border-left: 1px solid var(--line); border-right: 1px solid var(--line);
-    text-align: center; font-family: var(--font-mono); font-size: 16px; font-weight: 600; color: var(--ink);
+    width: 54px; height: 38px; border: none; border-left: 1px solid var(--line); border-right: 1px solid var(--line);
+    text-align: center; font-family: var(--font-mono); font-size: 15px; font-weight: 600; color: var(--ink);
   }
   .stepper input:focus { outline: none; }
 
@@ -144,7 +144,7 @@
   .seg.wide button { width: auto; padding: 10px 20px; font-family: var(--font-sans); font-size: 13.5px; }
 
   /* Tabs */
-  .tabs { display: flex; gap: 4px; margin-bottom: 24px; border-bottom: 1px solid var(--line); }
+  .tabs { display: flex; gap: 4px; margin-bottom: 8px; border-bottom: 1px solid var(--line); }
   .tab {
     padding: 10px 16px; border: none; background: none; cursor: pointer; font-family: var(--font-sans);
     font-size: 14px; font-weight: 600; color: var(--muted); border-bottom: 2px solid transparent; margin-bottom: -1px;
@@ -157,7 +157,7 @@
   /* Studio Features: base plan + add-on cards */
   .base-plan {
     display: flex; align-items: center; justify-content: space-between; gap: 16px;
-    padding: 16px 18px; border: 1px solid var(--line); background: #f0fdf4; border-radius: var(--card-radius); margin-bottom: 12px;
+    padding: 11px 14px; border: 1px solid var(--line); background: #f0fdf4; border-radius: var(--card-radius); margin-bottom: 10px;
   }
   .bp-left { display: flex; align-items: center; gap: 12px; }
   .bp-left > svg { width: 20px; height: 20px; stroke: var(--success); fill: none; flex: 0 0 auto; }
@@ -166,10 +166,10 @@
   .bp-sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
   .bp-price { font-family: var(--font-mono); font-size: 18px; font-weight: 700; color: var(--ink); }
 
-  .addon-list { display: flex; flex-direction: column; gap: 12px; }
+  .addon-list { display: flex; flex-direction: column; gap: 10px; }
   .addon-card { border: 1px solid var(--line); border-radius: var(--card-radius); overflow: hidden; transition: background 0.12s; }
   .addon-card.on { background: #faf9ff; }
-  .addon-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 18px; cursor: pointer; }
+  .addon-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 11px 14px; cursor: pointer; }
   .addon-htitle { display: flex; align-items: center; gap: 9px; }
   .addon-htitle > svg { width: 18px; height: 18px; stroke: var(--brand); fill: none; flex: 0 0 auto; }
   .addon-name { font-size: 15px; font-weight: 700; }
@@ -207,7 +207,7 @@
     position: fixed; left: 0; right: 0; bottom: 0; z-index: 50; background: var(--surface);
     border-top: 1px solid var(--line); box-shadow: 0 -8px 24px -16px rgba(15,23,42,0.30);
   }
-  .cb-inner { max-width: 1180px; margin: 0 auto; padding: 12px 28px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+  .cb-inner { max-width: 1320px; margin: 0 auto; padding: 9px 28px; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
   .cb-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); display: block; margin-bottom: 3px; }
   .cb-parts { font-size: 13px; color: var(--ink-2); display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
   .cb-parts b { font-weight: 700; color: var(--ink); font-family: var(--font-mono); }
@@ -221,11 +221,14 @@
   @media (max-width: 560px) { .cb-label { display: none; } .cb-inner { padding: 10px 16px; gap: 12px; } }
 
   /* Layout below */
-  .grid { display: grid; grid-template-columns: 1fr 380px; gap: 24px; align-items: start; }
+  .grid { display: grid; grid-template-columns: 1fr 360px; gap: 16px; align-items: start; }
   @media (max-width: 940px) { .grid { grid-template-columns: 1fr; } }
+  .grid-3 { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1.05fr) 340px; }
+  @media (max-width: 1080px) { .grid-3 { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 760px) { .grid-3 { grid-template-columns: 1fr; } }
 
   .panel-title { font-size: 13px; font-weight: 700; margin: 0 0 2px; letter-spacing: -0.01em; }
-  .panel-sub { font-size: 12px; color: var(--muted); margin: 0 0 16px; }
+  .panel-sub { font-size: 11.5px; color: var(--muted); margin: 0 0 12px; line-height: 1.4; }
 
   /* Compare table */
   table.tier { width: 100%; border-collapse: collapse; }
@@ -239,8 +242,8 @@
     color: var(--ink-2); padding: 4px 10px; text-align: center; border: none;
   }
   table.tier tbody td {
-    padding: 11px 10px; border-bottom: 1px solid var(--line-2);
-    text-align: right; font-size: 14px;
+    padding: 7px 10px; border-bottom: 1px solid var(--line-2);
+    text-align: right; font-size: 13px;
   }
   table.tier tbody td.lead { text-align: left; }
   table.tier tbody tr { cursor: pointer; transition: background 0.12s; }
@@ -252,10 +255,10 @@
   .colsplit { border-left: 1px solid var(--line); }
 
   /* Discount logic panel */
-  .disc-list { display: flex; flex-direction: column; gap: 12px; }
+  .disc-list { display: flex; flex-direction: column; gap: 10px; }
   .disc-item, .disc-group {
-    display: flex; justify-content: space-between; align-items: center; gap: 16px;
-    padding: 14px 16px; border: 1px solid var(--line); border-radius: var(--card-radius);
+    display: flex; justify-content: space-between; align-items: center; gap: 14px;
+    padding: 11px 13px; border: 1px solid var(--line); border-radius: var(--card-radius);
   }
   .disc-group { flex-wrap: wrap; }
   .disc-name { font-size: 13.5px; font-weight: 600; display: block; }
@@ -277,18 +280,18 @@
   .vol-tier.on small { color: var(--brand); }
   @media (max-width: 560px) { .disc-group { flex-direction: column; align-items: flex-start; } }
   .save-banner {
-    margin: 16px 0 0; padding: 12px 16px; border-radius: 10px; background: #f0fdf4;
-    font-size: 13px; color: var(--ink-2); line-height: 1.5;
+    margin: 12px 0 0; padding: 10px 13px; border-radius: 8px; background: #f0fdf4;
+    font-size: 12px; color: var(--ink-2); line-height: 1.45;
   }
   .save-banner b { color: var(--success); font-weight: 700; }
   .save-banner.flat { background: var(--line-2); }
   .save-banner.flat b { color: var(--ink); }
 
   /* Integrations */
-  .int-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 16px; }
+  .int-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; margin-bottom: 12px; }
   .int-summary { font-family: var(--font-mono); font-size: 12px; color: var(--ink-2); white-space: nowrap; }
   .int-summary b { color: var(--brand); font-weight: 600; }
-  .int-groups { display: grid; grid-template-columns: 1fr 1fr; gap: 16px 20px; }
+  .int-groups { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
   @media (max-width: 560px) { .int-groups { grid-template-columns: 1fr; } }
   .int-group { min-width: 0; }
   .int-glabel { display: block; font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
@@ -350,53 +353,38 @@
     font-family: var(--font-mono); font-size: 10px; font-weight: 600; color: var(--brand);
     background: var(--brand-soft); border-radius: 999px; padding: 1px 7px; margin-left: 2px;
   }
-  .sum-head { padding: 18px 22px 14px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: baseline; }
+  .sum-head { padding: 13px 18px 11px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: baseline; }
   .sum-head .lbl { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
   .sum-head .ctx { font-family: var(--font-mono); font-size: 11px; color: var(--ink-2); }
-  .sum-body { padding: 16px 22px; }
-  .line { display: flex; justify-content: space-between; align-items: baseline; padding: 7px 0; font-size: 13.5px; }
+  .sum-body { padding: 12px 18px; }
+  .line { display: flex; justify-content: space-between; align-items: baseline; padding: 5px 0; font-size: 13px; }
   .line .l { color: var(--ink-2); }
   .line .v { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 500; }
   .line.discount .v { color: var(--success); }
   .line .v .gross { color: var(--muted); text-decoration: line-through; font-weight: 400; font-size: 12px; margin-right: 8px; }
   .line .v .net { font-weight: 600; }
   .line.muted .l, .line.muted .v { color: var(--muted); }
-  .divider { height: 1px; background: var(--line); margin: 10px 0; }
-  .total-line { display: flex; justify-content: space-between; align-items: baseline; padding: 8px 0 0; }
+  .divider { height: 1px; background: var(--line); margin: 8px 0; }
+  .total-line { display: flex; justify-content: space-between; align-items: baseline; padding: 6px 0 0; }
   .total-line .l { font-size: 14px; font-weight: 700; }
-  .total-line .v { font-family: var(--font-mono); font-size: 26px; font-weight: 700; letter-spacing: -0.01em; }
+  .total-line .v { font-family: var(--font-mono); font-size: 23px; font-weight: 700; letter-spacing: -0.01em; }
   .total-line .per { font-size: 11px; color: var(--muted); font-weight: 500; }
   .blended { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); margin-top: 6px; }
   .blended .num { color: var(--ink-2); }
 
-  .sum-foot { padding: 14px 22px 18px; background: var(--bg); border-top: 1px solid var(--line); }
+  .sum-foot { padding: 12px 18px 14px; background: var(--bg); border-top: 1px solid var(--line); }
   .annual-row { display: flex; justify-content: space-between; align-items: baseline; }
   .annual-row .l { font-size: 12px; color: var(--ink-2); font-weight: 600; }
   .annual-row .v { font-family: var(--font-mono); font-size: 16px; font-weight: 700; }
 
   .cta {
-    display: block; width: 100%; margin-top: 14px; padding: 12px; border: none; border-radius: 10px;
-    background: var(--brand); color: #fff; font-family: var(--font-sans); font-size: 14px; font-weight: 600;
+    display: block; width: 100%; margin-top: 12px; padding: 10px; border: none; border-radius: 8px;
+    background: var(--brand); color: #fff; font-family: var(--font-sans); font-size: 13.5px; font-weight: 600;
     cursor: pointer; transition: opacity 0.12s;
   }
   .cta:hover { opacity: 0.92; }
 
-  /* Insights */
-  .insights { margin-top: 20px; }
-  .insights .card { padding: 18px 22px; }
-  .ins-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
-  .ins-head svg { width: 15px; height: 15px; stroke: var(--brand); fill: none; }
-  .ins-head .t { font-size: 13px; font-weight: 700; }
-  .ins-list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 11px; }
-  .ins-item { display: flex; gap: 9px; font-size: 12.5px; color: var(--ink-2); line-height: 1.5; }
-  .ins-item .ico { flex: 0 0 auto; margin-top: 1px; }
-  .ins-item .ico svg { width: 14px; height: 14px; fill: none; }
-  .ico-up svg { stroke: var(--success); }
-  .ico-info svg { stroke: var(--link); }
-  .ico-warn svg { stroke: var(--warn); }
-  .ins-item b { font-weight: 600; color: var(--ink); }
-
-  .note { font-size: 11.5px; color: var(--muted); margin-top: 14px; line-height: 1.5; }
+  .note { font-size: 11px; color: var(--muted); margin-top: 12px; line-height: 1.45; }
   .note b { color: var(--ink-2); font-weight: 600; }
 </style>
 </head>
@@ -405,7 +393,6 @@
   <header class="page" style="position:relative">
     <div class="eyebrow"><span class="dot"></span> Spyne · Pricing</div>
     <h1 class="title">Pricing Calculator</h1>
-    <p class="subtitle">Configure a plan and see a real-time cost breakdown. Pricing is per rooftop, per month.</p>
     <a class="edit-link" href="admin.html" title="Edit prices, slabs, discounts and add-ons">
       <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
       Edit pricing
@@ -441,8 +428,8 @@
     </div>
   </section>
 
-  <div class="grid">
-    <!-- LEFT: detail + compare -->
+  <div class="grid grid-3">
+    <!-- COL 1: tier table -->
     <div>
       <section class="card">
         <p class="panel-title"><span class="step">3</span> Select Max VINs / rooftop</p>
@@ -465,8 +452,11 @@
           <tbody id="tierBody"></tbody>
         </table>
       </section>
+    </div>
 
-      <section class="card" style="margin-top:20px">
+    <!-- COL 2: discounts + integrations -->
+    <div>
+      <section class="card">
         <p class="panel-title">Discounts</p>
         <p class="panel-sub">Stack savings by running the full agent suite and committing more rooftops.</p>
         <div class="disc-list">
@@ -481,21 +471,20 @@
             </div>
           </div>
           <div class="disc-group">
-            <div style="flex:1 1 220px">
+            <div style="flex:1 1 160px">
               <span class="disc-name">Rooftop commitment</span>
               <span class="disc-desc" id="volBenefit">Commit more rooftops for volume pricing.</span>
             </div>
             <div class="vol-tiers" id="volTiers"></div>
           </div>
         </div>
-        <p class="save-banner" id="saveBanner"></p>
       </section>
 
-      <section class="card" style="margin-top:20px">
+      <section class="card" style="margin-top:14px">
         <div class="int-head">
           <div>
             <p class="panel-title">Integrations</p>
-            <p class="panel-sub">Pass-through cost, billed per rooftop and split equally across the agents on a rooftop. Items without a confirmed rate show TBD.</p>
+            <p class="panel-sub">Pass-through, per rooftop. Split across agents. Blank = TBD.</p>
           </div>
           <span class="int-summary" id="intSummary">None selected</span>
         </div>
@@ -503,7 +492,7 @@
       </section>
     </div>
 
-    <!-- RIGHT: summary + insights -->
+    <!-- RIGHT: summary -->
     <div class="summary">
       <section class="card">
         <div class="sum-head">
@@ -554,19 +543,6 @@
             <span class="v num" id="annualTotal" style="color:var(--brand)">$0</span>
           </div>
           <button class="cta">Request a formal quote</button>
-          <p class="note" style="margin-top:12px">
-            <b>Integrations</b> are billed per rooftop as a pass-through cost, split equally across the agents on a rooftop. Items marked TBD are confirmed during scoping.
-          </p>
-        </div>
-      </section>
-
-      <section class="insights">
-        <div class="card">
-          <div class="ins-head">
-            <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a7 7 0 0 0-4 12.7V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.3A7 7 0 0 0 12 2Z"/><path d="M9 21h6"/></svg>
-            <span class="t">Insights</span>
-          </div>
-          <ul class="ins-list" id="insights"></ul>
         </div>
       </section>
     </div>
@@ -593,7 +569,7 @@
       </div>
     </section>
 
-    <div class="grid">
+    <div class="grid grid-3">
       <div>
         <section class="card">
           <p class="panel-title"><span class="step">3</span> Select Max VINs / rooftop</p>
@@ -609,8 +585,10 @@
             <tbody id="sTierBody"></tbody>
           </table>
         </section>
+      </div>
 
-        <section class="card" style="margin-top:20px">
+      <div>
+        <section class="card">
           <p class="panel-title">Features</p>
           <p class="panel-sub">Your base plan is always included. Toggle add-ons; each is priced per rooftop across all VIN tiers.</p>
           <div class="base-plan">
@@ -661,16 +639,6 @@
               <span class="v num" id="sAnnual" style="color:var(--brand)">$0</span>
             </div>
             <button class="cta">Request a formal quote</button>
-          </div>
-        </section>
-
-        <section class="insights">
-          <div class="card">
-            <div class="ins-head">
-              <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a7 7 0 0 0-4 12.7V17a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1v-2.3A7 7 0 0 0 12 2Z"/><path d="M9 21h6"/></svg>
-              <span class="t">Insights</span>
-            </div>
-            <ul class="ins-list" id="sInsights"></ul>
           </div>
         </section>
       </div>
@@ -762,9 +730,9 @@
   }
 
   const INT_CATEGORIES = [
-    { key: "sales",   label: "Sales integrations",   match: t => t === "sales" },
-    { key: "service", label: "Service integrations", match: t => t === "service" },
-    { key: "other",   label: "Other integrations",   match: t => t !== "sales" && t !== "service" },
+    { key: "sales",   label: "Sales",   match: t => t === "sales" },
+    { key: "service", label: "Service", match: t => t === "service" },
+    { key: "other",   label: "Other",   match: t => t !== "sales" && t !== "service" },
   ];
   const intType = it => (it.type || "").toLowerCase();
 
@@ -953,37 +921,24 @@
     bs.textContent = allFour ? "Applied" : `${activeCount} of 4`;
     bs.classList.toggle("on", allFour);
     if (allFour) {
-      bb.innerHTML = `Full suite active. You're saving <b style="color:var(--success)">${fmt(bundleAmt)}/mo</b> per rooftop.`;
+      bb.innerHTML = `Applied. Saving <b style="color:var(--success)">${fmt(bundleAmt)}/mo</b> per rooftop.`;
     } else {
-      const fullSubtotal = AGENTS.reduce((s,a) => s + t[a.key], 0);
-      const potential = fullSubtotal * BUNDLE_DISCOUNT;
       const missing = 4 - activeCount;
-      bb.innerHTML = `Add the ${missing} remaining agent(s) to unlock ${Math.round(BUNDLE_DISCOUNT*100)}% off, worth <b>${fmt(potential)}/mo</b> per rooftop.`;
+      bb.innerHTML = `Add ${missing} more agent(s) to unlock ${Math.round(BUNDLE_DISCOUNT*100)}%.`;
     }
 
-    // volume benefit (Excel: <3 = 0%, 3 to 6 = 10%, 7+ = 20%)
+    // volume benefit
     document.querySelectorAll("#volTiers .vol-tier").forEach(el => {
       el.classList.toggle("on", Number(el.dataset.vol) === Math.round(gDisc * 100));
     });
     const vbn = document.getElementById("volBenefit");
-    const r0p = Math.round((VOL.r0 || 0) * 100), r1p = Math.round(VOL.r1 * 100), r2p = Math.round(VOL.r2 * 100);
+    const r1p = Math.round(VOL.r1 * 100), r2p = Math.round(VOL.r2 * 100);
     if (state.groups < VOL.t1) {
-      vbn.innerHTML = `${r0p}% applied. Commit <b>${VOL.t1} rooftops</b> to step up to ${r1p}% off (<b>${fmt(afterBundle*VOL.r1)}/mo</b> per rooftop).`;
+      vbn.innerHTML = `Reach <b>${VOL.t1} rooftops</b> for ${r1p}%.`;
     } else if (state.groups < VOL.t2) {
-      vbn.innerHTML = `${r1p}% applied. Reach <b>${VOL.t2} rooftops</b> for ${r2p}% off (<b>${fmt(afterBundle*VOL.r2)}/mo</b> per rooftop).`;
+      vbn.innerHTML = `Reach <b>${VOL.t2} rooftops</b> for ${r2p}%.`;
     } else {
-      vbn.innerHTML = `Top tier. ${r2p}% volume discount applied across all rooftops.`;
-    }
-
-    // total savings banner (totalSaved computed above)
-    const savedTotal = totalSaved * state.groups;
-    const sb = document.getElementById("saveBanner");
-    if (savedTotal > 0) {
-      sb.className = "save-banner";
-      sb.innerHTML = `Total savings of <b>${fmt(savedTotal)}/mo</b> (<b>${fmt(savedTotal*12)}/yr</b>) across ${state.groups} rooftop(s) versus undiscounted pricing.`;
-    } else {
-      sb.className = "save-banner flat";
-      sb.innerHTML = `No discounts applied yet. Add all 4 agents and commit 3+ rooftops to start saving.`;
+      vbn.innerHTML = `Top tier reached.`;
     }
 
     // context + subs
@@ -993,43 +948,6 @@
     const gs = document.getElementById("grpSub");
     gs.textContent = gDisc > 0 ? `${Math.round(gDisc*100)}% volume discount` : "No volume discount";
     gs.style.color = gDisc > 0 ? "var(--success)" : "var(--muted)";
-
-    renderInsights({ t, allFour, perRooftop });
-  }
-
-  // ---- Insights ----
-  const ICONS = {
-    up:   '<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/></svg>',
-    info: '<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>',
-    warn: '<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>',
-  };
-  const insItem = (k, html) => `<li class="ins-item"><span class="ico ico-${k}">${ICONS[k]}</span><span>${html}</span></li>`;
-
-  function renderInsights({ t, allFour, perRooftop }) {
-    const out = [];
-    const activeCount = AGENTS.filter(a => state.agents[a.key]).length;
-
-    if (activeCount === 0) {
-      out.push(insItem("warn", "No agents are active. Turn one on in step 2 to see pricing."));
-    }
-    const bp = Math.round(BUNDLE_DISCOUNT * 100), r0p = Math.round((VOL.r0 || 0) * 100), r1p = Math.round(VOL.r1 * 100), r2p = Math.round(VOL.r2 * 100);
-    if (!allFour && activeCount > 0) {
-      const full = AGENTS.reduce((s,a) => s + t[a.key], 0);
-      out.push(insItem("up", `Running <b>all four agents</b> unlocks a ${bp}% bundle discount, worth about <b>${fmt(full*BUNDLE_DISCOUNT)}/mo</b> per rooftop. You have ${activeCount} of 4 active.`));
-    } else if (allFour) {
-      out.push(insItem("up", `<b>Full VINI stack active.</b> The ${bp}% all-agents bundle discount is applied.`));
-    }
-    if (state.groups < VOL.t1) {
-      out.push(insItem("info", `At the ${r0p}% volume tier. Add <b>${VOL.t1 - state.groups} more rooftop(s)</b> (${VOL.t1} total) to reach ${r1p}%.`));
-    } else if (state.groups < VOL.t2) {
-      out.push(insItem("info", `You are at the ${r1p}% volume tier. Reaching <b>${VOL.t2} rooftops</b> steps you up to ${r2p}%.`));
-    } else {
-      out.push(insItem("up", `<b>Top volume tier reached</b> at ${r2p}% off for ${state.groups} rooftops.`));
-    }
-    if (perRooftop > 0) {
-      out.push(insItem("info", `Effective rate is <b>${fmt2(perRooftop / t.vins)}/VIN</b> at the ${t.vins}-VIN tier. Higher VIN tiers lower the blended per-VIN cost.`));
-    }
-    document.getElementById("insights").innerHTML = out.join("");
   }
 
   // ---- Rooftop stepper ----
@@ -1061,7 +979,7 @@
     smartMatch:     '<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>',
     smartCampaigns: '<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>',
   };
-  const STUDIO_ADDONS = CFG.studio.addons.map(a => ({ ...a, icon: ADDON_ICONS[a.key] || "" }));
+  const STUDIO_ADDONS = CFG.studio.addons.map(a => ({ ...a, icon: ADDON_ICONS[a.key] || "", _collapsed: true }));
 
   const studio = {
     tierIndex: 1,                                  // default 100 VINs
@@ -1191,18 +1109,6 @@
     document.getElementById("sCtxGrp").textContent = studio.groups;
     document.getElementById("sGrpFoot").textContent = studio.groups;
     document.getElementById("sCartCount").textContent = 1 + addonCount;
-
-    // insights
-    const out = [];
-    if (studio.plan === "lite") {
-      out.push(insItem("info", `Studio Pro adds <b>${fmt(t.pro - t.lite)}/mo</b> per rooftop over Lite at this tier.`));
-    } else {
-      out.push(insItem("up", `<b>Studio Pro active</b> at the ${t.vins}-VIN tier.`));
-    }
-    const offAddon = STUDIO_ADDONS.find(a => !studio.addons[a.key]);
-    if (offAddon) out.push(insItem("info", `Add <b>${offAddon.label}</b> (${fmt(t[offAddon.key])}/mo) to expand coverage.`));
-    out.push(insItem("info", `Blended rate is <b>${fmt2(perRooftop / t.vins)}/VIN</b> at the ${t.vins}-VIN tier. Higher tiers lower the per-VIN cost.`));
-    document.getElementById("sInsights").innerHTML = out.join("");
   }
 
   // Studio rooftop stepper
