@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Spyne Pricing Calculator</title>
 <meta name="description" content="Spyne's Pricing Calculator" />
+<script src="config.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet" />
@@ -59,6 +60,14 @@
   .eyebrow .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--brand); }
   h1.title { font-size: 30px; font-weight: 700; letter-spacing: -0.02em; margin: 0 0 8px; }
   .subtitle { font-size: 15px; color: var(--ink-2); max-width: 640px; margin: 0; }
+  .edit-link {
+    position: absolute; top: 0; right: 0; display: inline-flex; align-items: center; gap: 7px;
+    font-size: 13px; font-weight: 600; color: var(--ink-2); text-decoration: none;
+    border: 1px solid var(--line); padding: 8px 14px; border-radius: 10px; background: var(--surface);
+  }
+  .edit-link:hover { border-color: #cbd5e1; }
+  .edit-link svg { width: 15px; height: 15px; stroke: var(--ink-2); fill: none; }
+  @media (max-width: 560px) { .edit-link span, .edit-link { font-size: 0; } .edit-link { padding: 8px; } .edit-link svg { margin: 0; } }
 
   /* Card */
   .card {
@@ -389,10 +398,14 @@
 </head>
 <body>
 <div class="wrap">
-  <header class="page">
+  <header class="page" style="position:relative">
     <div class="eyebrow"><span class="dot"></span> Spyne · Pricing</div>
     <h1 class="title">Pricing Calculator</h1>
     <p class="subtitle">Configure a plan and see a real-time cost breakdown. Pricing is per rooftop, per month.</p>
+    <a class="edit-link" href="admin.html" title="Edit prices, slabs, discounts and add-ons">
+      <svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      Edit pricing
+    </a>
   </header>
 
   <div class="tabs">
@@ -459,7 +472,7 @@
               <span class="disc-desc" id="bundleBenefit">Run all four VINI agents to unlock 10% off.</span>
             </div>
             <div class="disc-right">
-              <span class="disc-rate">10%</span>
+              <span class="disc-rate" id="bundleRate">10%</span>
               <span class="disc-status" id="bundleStatus">Not applied</span>
             </div>
           </div>
@@ -468,11 +481,7 @@
               <span class="disc-name">Rooftop commitment</span>
               <span class="disc-desc" id="volBenefit">Commit more rooftops for volume pricing.</span>
             </div>
-            <div class="vol-tiers" id="volTiers">
-              <div class="vol-tier" data-vol="0">0%<small>under 3</small></div>
-              <div class="vol-tier" data-vol="10">10%<small>3 to 6</small></div>
-              <div class="vol-tier" data-vol="20">20%<small>7 or more</small></div>
-            </div>
+            <div class="vol-tiers" id="volTiers"></div>
           </div>
         </div>
         <p class="save-banner" id="saveBanner"></p>
@@ -691,42 +700,18 @@
 </div>
 
 <script>
-  // ---- Pricing model (from Vini Price.xlsx) ----
-  const TIERS = [
-    { vins: 50,  salesIn: 900,  salesOut: 1150, servIn: 1100, servOut: 1399 },
-    { vins: 100, salesIn: 1200, salesOut: 1800, servIn: 1440, servOut: 2160 },
-    { vins: 200, salesIn: 1600, salesOut: 2400, servIn: 1920, servOut: 2880 },
-    { vins: 300, salesIn: 2100, salesOut: 3150, servIn: 2520, servOut: 3780 },
-  ];
+  // ---- Pricing model (editable via admin.html / config.js) ----
+  const CFG = loadPricingConfig();
+  const TIERS = CFG.vini.tiers;
   const AGENTS = [
     { key: "salesIn",  prod: "VINI Sales",   label: "Inbound",  full: "VINI Sales · Inbound" },
     { key: "salesOut", prod: "VINI Sales",   label: "Outbound", full: "VINI Sales · Outbound" },
     { key: "servIn",   prod: "VINI Service", label: "Inbound",  full: "VINI Service · Inbound" },
     { key: "servOut",  prod: "VINI Service", label: "Outbound", full: "VINI Service · Outbound" },
   ];
-  const BUNDLE_DISCOUNT = 0.10;
-
-  // Integration providers — cost is per rooftop, per month (null = pricing TBD).
-  // Add new rows here as the list grows.
-  const INTEGRATIONS = [
-    { name: "Vinsolutions",            type: "sales",    cost: 95 },
-    { name: "CDK (Elead)",             type: "sales",    cost: 500 },
-    { name: "CDK Drive",               type: "service",  cost: 3400 },
-    { name: "Dealersocket (Solera)",   type: "sales",    cost: 200 },
-    { name: "Tekion (CRM and DMS)",    type: "sales",    cost: null },
-    { name: "xTime",                   type: "service",  cost: 291 },
-    { name: "Update Promise",          type: "sales",    cost: null },
-    { name: "Dealerbuilt/Lightyear",   type: "sales",    cost: null },
-    { name: "MyKaarma",                type: "sales",    cost: 62 },
-    { name: "PBS",                     type: "service",  cost: null },
-    { name: "DealerFX",                type: "sales",    cost: null },
-    { name: "Reynolds Services US",    type: "service",  cost: 1300 },
-    { name: "Reynolds Services Canada",type: "service",  cost: null },
-    { name: "Reynolds CRM US",         type: "sales",    cost: 1300 },
-    { name: "Reynolds CRM Canada",     type: "sales",    cost: null },
-    { name: "Evox",                    type: "cji",      cost: 83 },
-    { name: "clearvin",                type: "vincheck", cost: 483 },
-  ];
+  const BUNDLE_DISCOUNT = CFG.vini.bundle;
+  const VOL = CFG.vini.volume;
+  const INTEGRATIONS = CFG.vini.integrations;
 
   const state = {
     tierIndex: 1,                       // default 100 VINs
@@ -737,7 +722,7 @@
 
   const fmt  = n => "$" + Math.round(n).toLocaleString("en-US");
   const fmt2 = n => "$" + n.toLocaleString("en-US", {minimumFractionDigits:2, maximumFractionDigits:2});
-  const groupDiscount = g => g >= 7 ? 0.20 : (g >= 3 ? 0.10 : 0);
+  const groupDiscount = g => g >= VOL.t2 ? VOL.r2 : (g >= VOL.t1 ? VOL.r1 : 0);
 
   // Combined VINI + Studio total (shown in the fixed bottom bar)
   const totals = { vini: 0, studio: 0 };
@@ -747,6 +732,17 @@
     document.getElementById("cbStudio").textContent = fmt(totals.studio);
     document.getElementById("cbMonthly").textContent = fmt(combined);
     document.getElementById("cbAnnual").textContent = fmt(combined * 12);
+  }
+
+  function renderVolTiers() {
+    const defs = [
+      { rate: 0,      label: `under ${VOL.t1}` },
+      { rate: VOL.r1, label: VOL.t2 - VOL.t1 <= 1 ? `${VOL.t1}` : `${VOL.t1} to ${VOL.t2 - 1}` },
+      { rate: VOL.r2, label: `${VOL.t2} or more` },
+    ];
+    document.getElementById("volTiers").innerHTML = defs.map(d =>
+      `<div class="vol-tier" data-vol="${Math.round(d.rate*100)}">${Math.round(d.rate*100)}%<small>${d.label}</small></div>`
+    ).join("");
   }
 
   // ---- Build controls ----
@@ -870,7 +866,7 @@
     if (totalSaved > 0.5 && subtotal > 0) {
       sv.style.display = "block";
       const parts = [];
-      if (allFour) parts.push("10% bundle");
+      if (allFour) parts.push(`${Math.round(BUNDLE_DISCOUNT*100)}% bundle`);
       if (gDisc > 0) parts.push(`${Math.round(gDisc*100)}% volume`);
       document.getElementById("savingsLbl").textContent = `You save (${parts.join(" + ")})`;
       document.getElementById("savingsVal").textContent = "− " + fmt(totalSaved);
@@ -925,7 +921,7 @@
       const fullSubtotal = AGENTS.reduce((s,a) => s + t[a.key], 0);
       const potential = fullSubtotal * BUNDLE_DISCOUNT;
       const missing = 4 - activeCount;
-      bb.innerHTML = `Add the ${missing} remaining agent(s) to unlock 10% off, worth <b>${fmt(potential)}/mo</b> per rooftop.`;
+      bb.innerHTML = `Add the ${missing} remaining agent(s) to unlock ${Math.round(BUNDLE_DISCOUNT*100)}% off, worth <b>${fmt(potential)}/mo</b> per rooftop.`;
     }
 
     // volume benefit (Excel: <3 = 0%, 3 to 6 = 10%, 7+ = 20%)
@@ -933,14 +929,13 @@
       el.classList.toggle("on", Number(el.dataset.vol) === Math.round(gDisc * 100));
     });
     const vbn = document.getElementById("volBenefit");
-    if (state.groups < 3) {
-      const at3 = afterBundle * 0.10;
-      vbn.innerHTML = `Commit <b>3 rooftops</b> to unlock 10% off (<b>${fmt(at3)}/mo</b> per rooftop).`;
-    } else if (state.groups < 7) {
-      const at7 = afterBundle * 0.20;
-      vbn.innerHTML = `10% applied. Reach <b>7 rooftops</b> for 20% off (<b>${fmt(at7)}/mo</b> per rooftop).`;
+    const r1p = Math.round(VOL.r1 * 100), r2p = Math.round(VOL.r2 * 100);
+    if (state.groups < VOL.t1) {
+      vbn.innerHTML = `Commit <b>${VOL.t1} rooftops</b> to unlock ${r1p}% off (<b>${fmt(afterBundle*VOL.r1)}/mo</b> per rooftop).`;
+    } else if (state.groups < VOL.t2) {
+      vbn.innerHTML = `${r1p}% applied. Reach <b>${VOL.t2} rooftops</b> for ${r2p}% off (<b>${fmt(afterBundle*VOL.r2)}/mo</b> per rooftop).`;
     } else {
-      vbn.innerHTML = `Top tier. 20% volume discount applied across all rooftops.`;
+      vbn.innerHTML = `Top tier. ${r2p}% volume discount applied across all rooftops.`;
     }
 
     // total savings banner (totalSaved computed above)
@@ -980,18 +975,19 @@
     if (activeCount === 0) {
       out.push(insItem("warn", "No agents are active. Turn one on in step 2 to see pricing."));
     }
+    const bp = Math.round(BUNDLE_DISCOUNT * 100), r1p = Math.round(VOL.r1 * 100), r2p = Math.round(VOL.r2 * 100);
     if (!allFour && activeCount > 0) {
       const full = AGENTS.reduce((s,a) => s + t[a.key], 0);
-      out.push(insItem("up", `Running <b>all four agents</b> unlocks a 10% bundle discount, worth about <b>${fmt(full*BUNDLE_DISCOUNT)}/mo</b> per rooftop. You have ${activeCount} of 4 active.`));
+      out.push(insItem("up", `Running <b>all four agents</b> unlocks a ${bp}% bundle discount, worth about <b>${fmt(full*BUNDLE_DISCOUNT)}/mo</b> per rooftop. You have ${activeCount} of 4 active.`));
     } else if (allFour) {
-      out.push(insItem("up", `<b>Full VINI stack active.</b> The 10% all-agents bundle discount is applied.`));
+      out.push(insItem("up", `<b>Full VINI stack active.</b> The ${bp}% all-agents bundle discount is applied.`));
     }
-    if (state.groups < 3) {
-      out.push(insItem("info", `Add <b>${3 - state.groups} more rooftop(s)</b> (3 total) to reach the 10% volume tier.`));
-    } else if (state.groups < 7) {
-      out.push(insItem("info", `You are at the 10% volume tier. Reaching <b>7 rooftops</b> steps you up to 20%.`));
+    if (state.groups < VOL.t1) {
+      out.push(insItem("info", `Add <b>${VOL.t1 - state.groups} more rooftop(s)</b> (${VOL.t1} total) to reach the ${r1p}% volume tier.`));
+    } else if (state.groups < VOL.t2) {
+      out.push(insItem("info", `You are at the ${r1p}% volume tier. Reaching <b>${VOL.t2} rooftops</b> steps you up to ${r2p}%.`));
     } else {
-      out.push(insItem("up", `<b>Top volume tier reached</b> at 20% off for ${state.groups} rooftops.`));
+      out.push(insItem("up", `<b>Top volume tier reached</b> at ${r2p}% off for ${state.groups} rooftops.`));
     }
     if (perRooftop > 0) {
       out.push(insItem("info", `Effective rate is <b>${fmt2(perRooftop / t.vins)}/VIN</b> at the ${t.vins}-VIN tier. Higher VIN tiers lower the blended per-VIN cost.`));
@@ -1025,24 +1021,13 @@
   // ========================= STUDIO =========================
   // Pricing per rooftop, per month (from pricing-calculator-one-wine.vercel.app).
   // Edit these numbers as needed.
-  const STUDIO_TIERS = [
-    { vins: 50,  lite: 199, pro: 499,  smartMatch: 298, smartCampaigns: 374 },
-    { vins: 100, lite: 349, pro: 849,  smartMatch: 598, smartCampaigns: 524 },
-    { vins: 200, lite: 599, pro: 1499, smartMatch: 748, smartCampaigns: 749 },
-    { vins: 300, lite: 749, pro: 1899, smartMatch: 748, smartCampaigns: 974 },
-    { vins: 400, lite: 799, pro: 1999, smartMatch: 748, smartCampaigns: 1199 },
-  ];
+  const STUDIO_TIERS = CFG.studio.tiers;
   const STUDIO_PLANS  = [ { key: "lite", label: "Studio Lite" }, { key: "pro", label: "Studio Pro" } ];
-  const STUDIO_ADDONS = [
-    {
-      key: "smartMatch", label: "SmartMatch", sublabel: "SmartMatch — New + Pre-owned",
-      icon: '<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>',
-    },
-    {
-      key: "smartCampaigns", label: "SmartCampaigns", sublabel: null,
-      icon: '<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>',
-    },
-  ];
+  const ADDON_ICONS = {
+    smartMatch:     '<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>',
+    smartCampaigns: '<svg viewBox="0 0 24 24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>',
+  };
+  const STUDIO_ADDONS = CFG.studio.addons.map(a => ({ ...a, icon: ADDON_ICONS[a.key] || "" }));
 
   const studio = {
     tierIndex: 1,                                  // default 100 VINs
@@ -1208,6 +1193,8 @@
   });
 
   // ---- Init ----
+  document.getElementById("bundleRate").textContent = Math.round(BUNDLE_DISCOUNT * 100) + "%";
+  renderVolTiers();
   renderAgentChips();
   renderIntegrations();
   recalc();
