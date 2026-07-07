@@ -1187,12 +1187,24 @@
   });
 
   // ---- Tabs ----
+  function selectTab(name) {
+    const tab = document.querySelector(`.tab[data-tab="${name}"]`);
+    if (!tab) return;
+    document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t === tab));
+    document.querySelectorAll(".calc").forEach(c => c.classList.toggle("active", c.id === "calc-" + name));
+  }
   document.querySelectorAll(".tab").forEach(tab => {
-    tab.addEventListener("click", () => {
-      document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t === tab));
-      document.querySelectorAll(".calc").forEach(c => c.classList.toggle("active", c.id === "calc-" + tab.dataset.tab));
-    });
+    tab.addEventListener("click", () => selectTab(tab.dataset.tab));
   });
+  // Deep link: ?tab=studio|vini pre-selects a product. When present, the page
+  // is embedded in the Central Analytics hub, which has its OWN left-panel
+  // Studio / Vini switcher — so hide this in-page toggle to avoid two.
+  const deepLinkTab = new URLSearchParams(location.search).get("tab");
+  if (deepLinkTab === "studio" || deepLinkTab === "vini") {
+    selectTab(deepLinkTab);
+    const toggle = document.querySelector(".tabs");
+    if (toggle) toggle.style.display = "none";
+  }
 
   // ---- Init ----
   document.getElementById("bundleRate").textContent = Math.round(BUNDLE_DISCOUNT * 100) + "%";
